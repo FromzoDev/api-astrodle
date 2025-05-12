@@ -25,11 +25,8 @@ services:
     depends_on:
       - db
     volumes:
-      - ./src:/app/src
-      - ./uploads:/app/uploads
-      - ./test:/app/test 
-      - ./tsconfig.json:/app/tsconfig.json
-      - ./nest-cli.json:/app/nest-cli.json  
+      - .:/app
+      - /app/node_modules
     networks:
       - default
     command: npm run start:dev

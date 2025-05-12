@@ -27,8 +27,12 @@ services:
     volumes:
       - ./src:/app/src
       - ./uploads:/app/uploads
+      - ./test:/app/test 
+      - ./tsconfig.json:/app/tsconfig.json
+      - ./nest-cli.json:/app/nest-cli.json  
     networks:
       - default
+    command: npm run start:dev
 
   pgadmin:
     image: dpage/pgadmin4

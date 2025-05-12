@@ -4,6 +4,8 @@ WORKDIR /app
 
 COPY package*.json ./
 COPY .env ./
+COPY tsconfig*.json ./
+
 
 RUN npm install
 
@@ -11,6 +13,6 @@ COPY . .
 
 EXPOSE 3000
 
-RUN npm run build
+RUN npm install -g @nestjs/cli
 
 CMD [ "npm", "run", "start:dev" ]

@@ -1,9 +1,12 @@
-import { Module } from '@nestjs/common';
+import { Module, OnModuleInit } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
+import { DataSource } from 'typeorm';
+import { User } from './users/user.entity';
+import { UserSeed } from './users/user.seed';
 
 @Module({
   imports: [
@@ -14,7 +17,6 @@ import { UsersModule } from './users/users.module';
       username: process.env.POSTGRES_USER || 'postgres',
       password: process.env.POSTGRES_PASSWORD || 'postgres',
       database: process.env.POSTGRES_DB || 'postgres',
-      entities: [],
       synchronize: true,
       autoLoadEntities: true,
     }),
@@ -27,4 +29,13 @@ import { UsersModule } from './users/users.module';
 })
 
 
-export class AppModule {}
+export class AppModule implements OnModuleInit {
+  constructor(private dataSource: DataSource) {}
+
+  async onModuleInit() {
+    
+    const userRepository = this.dataSource.getRepository(User); // importe User
+
+    await UserSeed.run(userRepository);
+  }
+}

@@ -44,6 +44,11 @@ import { updateUserDTO } from './DTO/update-user-dto';
 
     async updateUser(updateUserDTO: updateUserDTO, id: number, currentUser: User) {
       const updateUser = await this.usersRepository.findOneById(id);
+      const existingUsername = await this.usersRepository.findOne({
+        where: [
+          { username: updateUserDTO.username },
+        ],
+      });
 
       if (currentUser.id !== id) {
         throw new ForbiddenException("Vous ne pouvez modifier que votre propre compte.");
@@ -51,6 +56,10 @@ import { updateUserDTO } from './DTO/update-user-dto';
 
       if (!updateUser) {
         throw new NotFoundException(ErrorMessage.USER_NOT_FOUND);
+      }
+
+      if(existingUsername){
+        throw new ConflictException(ErrorMessage.USERNAME_ALREADY_EXISTS);
       }
 
       try{

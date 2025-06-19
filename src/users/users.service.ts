@@ -69,4 +69,8 @@ import { updateUserDTO } from './DTO/update-user-dto';
        }
 
     }
+
+    async deleteUser(id: number){
+      return await this.usersRepository.deleteUser(id)
+    }
 }

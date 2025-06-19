@@ -1,4 +1,4 @@
-import {Controller, UseGuards, Get, Request, Param, NotFoundException, Post, Body, Patch, ParseIntPipe} from '@nestjs/common';
+import {Controller, UseGuards, Get, Request, Param, NotFoundException, Post, Body, Patch, ParseIntPipe, Delete} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { AuthGuard } from '../auth/auth.guard';
 import { User } from './user.entity';
@@ -42,6 +42,12 @@ export class UsersController {
   @Get('profile')
   getProfile(@Request() req){
     return req.user;
+  }
+
+  @UseGuards(AuthGuard)
+  @Delete(':id')
+  deleteUser(@Param('id', ParseIntPipe) id: number,) {
+    return this.usersService.deleteUser(id);
   }
 
   

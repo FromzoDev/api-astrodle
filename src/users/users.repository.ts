@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { FindOneOptions, Repository } from 'typeorm';
 import { User } from './user.entity';
 
 @Injectable()
@@ -11,28 +11,32 @@ export class UsersRepository {
   ) {}
 
   async findAll(): Promise<User[]> {
-    return this.usersRepository.find();
+    return await this.usersRepository.find();
   }
 
+async findOne(options: FindOneOptions<User>): Promise<User | null> {
+  return await this.usersRepository.findOne(options);
+}
+
   async findOneByEmail(email: string): Promise<User | null> {
-  return this.usersRepository.findOneBy({ email });
+  return await this.usersRepository.findOneBy({ email });
 }
 
   async findOneById(id: number): Promise<User | null > {
-    return this.usersRepository.findOneBy({ id });
+    return await this.usersRepository.findOneBy({ id });
   }
 
-//   async createUser(userData: Partial<User>): Promise<User> {
-//     const user = this.usersRepository.create(userData);
-//     return this.usersRepository.save(user);
-//   }
+  async createUser(userData: Partial<User>): Promise<User> {
+    const user = await this.usersRepository.create(userData);
+    return await this.usersRepository.save(user);
+  }
 
-//   async updateUser(id: number, updateData: Partial<User>): Promise<User> {
-//     await this.usersRepository.update(id, updateData);
-//     return this.findOneById(id);
-//   }
+  async updateUser(id: number, updateData: Partial<User>): Promise<User | null> {
+      await this.usersRepository.update(id, updateData);
+    return await this.findOneById(id);
+  }
 
-//   async deleteUser(id: number): Promise<void> {
-//     await this.usersRepository.delete(id);
-//   }
+  async deleteUser(id: number): Promise<void> {
+    await this.usersRepository.delete(id);
+  }
 }

@@ -16,11 +16,17 @@ export class UsersController {
   }
 
   @UseGuards(AuthGuard)
+  @Get('profile')
+  getProfile(@Request() req){
+    return req.user;
+  }
+
+  @UseGuards(AuthGuard)
   @Get('/:id')
   getUserById(@Param('id') id: number): Promise<User | null>{
     const user = this.usersService.findOneById(id);
     if(!user){
-      throw new NotFoundException(`User with id ${id} not found`);
+      throw new NotFoundException(`Utilisateur ${id} `);
     }
     return user;
   }
@@ -36,13 +42,9 @@ export class UsersController {
   @Patch(':id')
   updateUser(@Param('id', ParseIntPipe) id: number, @Body() updateUserDTO: updateUserDTO, @Request() req ) {
     return this.usersService.updateUser(updateUserDTO, id, req.user);
-}
- 
-  @UseGuards(AuthGuard)
-  @Get('profile')
-  getProfile(@Request() req){
-    return req.user;
   }
+ 
+ 
 
   @UseGuards(AuthGuard)
   @Delete(':id')

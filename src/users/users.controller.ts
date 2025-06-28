@@ -24,33 +24,24 @@ export class UsersController {
   @UseGuards(AuthGuard)
   @Get('/:id')
   getUserById(@Param('id') id: number): Promise<User | null>{
-    const user = this.usersService.findOneById(id);
-    if(!user){
-      throw new NotFoundException(`Utilisateur ${id} `);
-    }
-    return user;
+    return this.usersService.findOneById(id);
   }
 
   @UseGuards(AuthGuard)
   @Post()
   createUser(@Body() createUserDTO: createUserDTO ): Promise<User> {
-    const user = this.usersService.createUser(createUserDTO);
-    return user
+    return this.usersService.createUser(createUserDTO);
   }
 
   @UseGuards(AuthGuard)
-  @Patch(':id')
+  @Patch('/:id')
   updateUser(@Param('id', ParseIntPipe) id: number, @Body() updateUserDTO: updateUserDTO, @Request() req ) {
     return this.usersService.updateUser(updateUserDTO, id, req.user);
   }
- 
- 
 
   @UseGuards(AuthGuard)
   @Delete(':id')
   deleteUser(@Param('id', ParseIntPipe) id: number,) {
     return this.usersService.deleteUser(id);
   }
-
-  
 }

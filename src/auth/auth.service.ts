@@ -3,7 +3,7 @@ import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { SignInDto } from './DTO/sign-in-dto';
 import * as bcrypt from 'bcrypt';
-import { ErrorMessage } from 'src/enum/error.enum';
+import { ErrorMessage } from 'src/common/enum/error.enum';
 
 @Injectable()
 export class AuthService {

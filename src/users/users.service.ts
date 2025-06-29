@@ -3,7 +3,7 @@ import { ConflictException, ForbiddenException, Injectable, InternalServerErrorE
 import { UsersRepository } from './users.repository';
 import { User } from './user.entity';
 import { createUserDTO } from './DTO/create-user-dto';
-import { ErrorMessage } from 'src/enum/error.enum';
+import { ErrorMessage } from 'src/common/enum/error.enum';
 import { updateUserDTO } from './DTO/update-user-dto';
 import * as bcrypt from 'bcrypt';
 

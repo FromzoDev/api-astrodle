@@ -13,6 +13,11 @@ export class UsersService {
   constructor(private readonly usersRepository: UsersRepository) { }
 
   async findAll(): Promise<User[]> {
+    try{
+
+    } catch (error) {
+
+    }
     return await this.usersRepository.findAll();
   }
 

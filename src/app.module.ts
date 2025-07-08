@@ -1,4 +1,4 @@
-import { Module, OnModuleInit } from '@nestjs/common';
+import { MiddlewareConsumer, Module, OnModuleInit, RequestMethod } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -7,6 +7,7 @@ import { UsersModule } from './users/users.module';
 import { DataSource } from 'typeorm';
 import { User } from './users/user.entity';
 import { UserSeed } from './users/user.seed';
+import { LoggerMiddleware } from './middleware/logger.middleware';
 
 @Module({
   imports: [
@@ -34,8 +35,14 @@ export class AppModule implements OnModuleInit {
 
   async onModuleInit() {
     
-    const userRepository = this.dataSource.getRepository(User); // importe User
+    const userRepository = this.dataSource.getRepository(User); 
 
     await UserSeed.run(userRepository);
+  }
+
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(LoggerMiddleware)
+      .forRoutes({ path: '*', method: RequestMethod.ALL }); // middleware sur toutes les routes
   }
 }

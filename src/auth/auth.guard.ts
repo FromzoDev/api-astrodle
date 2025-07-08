@@ -7,6 +7,7 @@ import {
   import { JwtService } from '@nestjs/jwt';
   import { jwtConstants } from './constants';
   import { Request } from 'express';
+import { ErrorMessage } from 'src/common/enum/error.enum';
   
   @Injectable()
   export class AuthGuard implements CanActivate {
@@ -16,7 +17,7 @@ import {
       const request = context.switchToHttp().getRequest();
       const token = this.extractTokenFromHeader(request);
       if (!token) {
-        throw new UnauthorizedException();
+        throw new UnauthorizedException(ErrorMessage.UNAUTHORIZED_MESSAGE);
       }
       try {
         const payload = await this.jwtService.verifyAsync(
@@ -29,7 +30,7 @@ import {
         // so that we can access it in our route handlers
         request['user'] = payload;
       } catch {
-        throw new UnauthorizedException();
+        throw new UnauthorizedException(ErrorMessage.UNAUTHORIZED_MESSAGE);
       }
       return true;
     }

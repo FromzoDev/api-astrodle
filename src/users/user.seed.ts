@@ -1,6 +1,7 @@
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
 import * as bcrypt from 'bcrypt';
+import { Role } from 'src/common/enum/roles.enum';
 
 export class UserSeed {
   static async run(userRepository: Repository<User>) {
@@ -21,6 +22,7 @@ export class UserSeed {
         username: 'Admin',
         lastName: 'User',
         isActive: true,
+        roles: [Role.Admin],
       });
       console.log('User admin créé');
       

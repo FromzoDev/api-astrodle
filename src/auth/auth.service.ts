@@ -14,23 +14,30 @@ export class AuthService {
   ) { }
 
   async signIn(signInDto: SignInDto): Promise<{ access_token: string }> {
-
     const { email, password } = signInDto;
-    const user = await this.usersService.findOneByEmail(email);
 
-    if (!user) {
+    try {
+      const user = await this.usersService.findOneByEmail(email);
+
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+
+      if (!isPasswordValid) {
+        throw new UnauthorizedException(ErrorMessage.USER_LOGIN_ERROR);
+      }
+
+      const payload = { id: user.id, username: user.username, email: user.email };
+
+      return {
+        access_token: await this.jwtService.signAsync(payload),
+      };
+
+    } catch (error) {
       throw new UnauthorizedException(ErrorMessage.USER_LOGIN_ERROR);
     }
+  }
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
 
-    if (!isPasswordValid) {
-      throw new UnauthorizedException(ErrorMessage.USER_LOGIN_ERROR);
-    }
-    const payload = { id: user.id, username: user.username, email: user.email };
-
-    return {
-      access_token: await this.jwtService.signAsync(payload),
-    };
+  async logout(): Promise<{ message: string }> {
+    return { message: 'Logout successful' };
   }
 }

@@ -2,12 +2,34 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
+import  { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.setGlobalPrefix('api');
+
+  const config = new DocumentBuilder()
+    .setTitle('Astrodle API documentation')
+    .setDescription('API documentation for the Astrodle application')
+    .setVersion('1.0') 
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        description: 'Enter JWT token',
+      },
+      'JWT-auth', 
+    )
+    .build();
+
+  const documentfactory = SwaggerModule.createDocument(app, config);
+
+  SwaggerModule.setup('api-docs', app, documentfactory, {
+    useGlobalPrefix: false,
+  });
 
   app.enableCors({
   origin: ['http://localhost:3001', 'http://example.com'],

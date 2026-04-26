@@ -43,6 +43,6 @@ export class AppModule implements OnModuleInit {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(LoggerMiddleware)
-      .forRoutes({ path: '*', method: RequestMethod.ALL }); // middleware sur toutes les routes
+      .forRoutes({ path: '*', method: RequestMethod.ALL }); 
   }
 }

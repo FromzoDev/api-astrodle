@@ -1,21 +1,23 @@
-import {Controller, UseGuards, Get, Request, Param, NotFoundException, Post, Body, Patch, ParseIntPipe, Delete, HttpStatus} from '@nestjs/common';
+import {Controller, Get, Request, Param, Post, Body, Patch, ParseIntPipe, Delete, HttpStatus} from '@nestjs/common';
 import { UsersService } from './users.service';
-import { AuthGuard } from '../auth/auth.guard';
 import { User } from './user.entity';
 import { createUserDTO } from './DTO/create-user-dto';
 import { updateUserDTO } from './DTO/update-user-dto';
-import { SuccessMessage } from 'src/common/enum/success.enum';
-import { apiResponse } from 'src/common/interfaces/response.interface';
+import { SuccessMessage } from '../common/enum/success.enum';
+import { ApiResponse } from '../common/interfaces/response.interface';
 import { ApiBearerAuth } from '@nestjs/swagger';
+import { Auth } from '../common/decorators/auth.decorator';
+import { Role } from '../common/enum/roles.enum';
 
 @ApiBearerAuth('JWT-auth')
 @Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
   
-  @UseGuards(AuthGuard)
+
+  @Auth(Role.Moderator)
   @Get()
-  async getUsers(): Promise<apiResponse<User[]>> {
+  async getUsers(): Promise<ApiResponse<User[]>> {
   return await this.usersService.findAll().then(users => ({
     code: HttpStatus.OK,
     message: SuccessMessage.USER_FETCHED_ALL,
@@ -23,21 +25,21 @@ export class UsersController {
   }));
 }
 
-  @UseGuards(AuthGuard)
+  @Auth()
   @Get('profile')
   @ApiBearerAuth('JWT-auth')
-  getProfile(@Request() req): apiResponse<User> {
+  getProfile(@Request() req): ApiResponse<User> {
     return {
       code: HttpStatus.OK,
-      message: 'Profil récupéré avec succès',
+      message: SuccessMessage.USER_PROFIL_FETCHED,
       data: req.user,
     };
   }
 
   @ApiBearerAuth('JWT-auth')
-  @UseGuards(AuthGuard)
+  @Auth(Role.Moderator)
   @Get('/:id')
-  async getUserById(@Param('id') id: number): Promise<apiResponse<User | null>>{
+  async getUserById(@Param('id') id: number): Promise<ApiResponse<User | null>>{
 
       return await this.usersService.findOneById(id).then(user => ({
       code: HttpStatus.OK,
@@ -47,22 +49,22 @@ export class UsersController {
   }
 
   @ApiBearerAuth('JWT-auth')
-  @UseGuards(AuthGuard)
+  @Auth(Role.Admin)
   @Post()
-  async createUser(@Body() createUserDTO: createUserDTO): Promise<apiResponse<User>> {
+  async createUser(@Body() createUserDTO: createUserDTO): Promise<ApiResponse<User>> {
     const user = await this.usersService.createUser(createUserDTO);
 
     return {
       code: HttpStatus.CREATED,
-      message: 'Utilisateur créé avec succès',
+      message: SuccessMessage.USER_CREATED,
       data: user,
     };
   }
 
   @ApiBearerAuth('JWT-auth')
-  @UseGuards(AuthGuard)
+  @Auth(Role.Admin)
   @Patch('/:id')
-  async updateUser(@Param('id', ParseIntPipe) id: number, @Body() updateUserDTO: updateUserDTO, @Request() req ): Promise<apiResponse<User | null>> {
+  async updateUser(@Param('id', ParseIntPipe) id: number, @Body() updateUserDTO: updateUserDTO, @Request() req ): Promise<ApiResponse<User | null>> {
     const updatedUser = await this.usersService.updateUser(updateUserDTO, id, req.user);
 
     return {
@@ -73,9 +75,9 @@ export class UsersController {
   }
 
   @ApiBearerAuth('JWT-auth')
-  @UseGuards(AuthGuard)
+  @Auth(Role.Admin)
   @Delete(':id')
-  async deleteUser(@Param('id', ParseIntPipe) id: number): Promise<apiResponse<null>> {
+  async deleteUser(@Param('id', ParseIntPipe) id: number): Promise<ApiResponse<null>> {
     await this.usersService.deleteUser(id);
 
     return {

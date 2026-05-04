@@ -2,9 +2,10 @@ import { ConflictException, ForbiddenException, HttpException, Injectable, Inter
 import { UsersRepository } from './users.repository';
 import { User } from './user.entity';
 import { createUserDTO } from './DTO/create-user-dto';
-import { ErrorMessage } from 'src/common/enum/error.enum';
+import { ErrorMessage } from '../common/enum/error.enum';
 import { updateUserDTO } from './DTO/update-user-dto';
 import * as bcrypt from 'bcrypt';
+import { Role } from '../common/enum/roles.enum';
 
 
 @Injectable()
@@ -100,7 +101,7 @@ export class UsersService {
 
   async updateUser(updateUserDTO: updateUserDTO, id: number, currentUser: User) {
     try {
-      if (currentUser.id !== id) {
+      if (currentUser.id !== id  && !currentUser.roles.includes(Role.Admin)) {
         throw new ForbiddenException(ErrorMessage.USER_CANNOT_MODIFY_OTHER);
       }
 

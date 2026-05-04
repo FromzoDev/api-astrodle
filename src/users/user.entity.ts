@@ -1,5 +1,5 @@
 
-import { Role } from 'src/common/enum/roles.enum';
+import { Role } from '../common/enum/roles.enum';
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
@@ -9,7 +9,7 @@ export class User {
 
   @Column({
     type: 'simple-array',
-    default: Role.User,
+    default: [Role.User],
   })
   roles: Role[];
 

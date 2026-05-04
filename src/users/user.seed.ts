@@ -1,7 +1,7 @@
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
 import * as bcrypt from 'bcrypt';
-import { Role } from 'src/common/enum/roles.enum';
+import { Role } from '../common/enum/roles.enum';
 
 export class UserSeed {
   static async run(userRepository: Repository<User>) {

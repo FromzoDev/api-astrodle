@@ -1,5 +1,6 @@
 import { IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Role } from '../../common/enum/roles.enum';
 
 export class updateUserDTO {
   @ApiProperty(
@@ -45,4 +46,16 @@ export class updateUserDTO {
   )
   @IsNotEmpty()
   lastName: string;
+
+  @ApiProperty(
+    {
+      description: 'The roles of the user',
+      example: [Role.User, Role.Admin],
+      type: [String],
+      title: 'Roles',
+    }
+  )
+  @IsNotEmpty()
+  roles: Role[];
+
 }

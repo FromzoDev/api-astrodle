@@ -1,5 +1,6 @@
 export enum ErrorMessage {
     GLOBAL_ERROR_MESSAGE = 'Une erreur est survenue.',
+    REFRESH_TOKEN_ERROR = 'Refresh token invalide ou expiré.',
     UNAUTHORIZED_MESSAGE = 'Vous n’êtes pas autorisé.',
     USERNAME_EMAIL_ALREADY_EXISTS = 'Le nom d’utilisateur ou l’email sont déjà utilisé.',
     USERNAME_ALREADY_EXISTS = 'Le nom d’utilisateur est déjà utilisé.',

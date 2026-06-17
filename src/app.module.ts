@@ -8,9 +8,14 @@ import { DataSource } from 'typeorm';
 import { User } from './users/user.entity';
 import { UserSeed } from './users/user.seed';
 import { LoggerMiddleware } from './middleware/logger.middleware';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
+    ThrottlerModule.forRoot([{
+      ttl: 60000, 
+      limit: 5,    
+    }]),
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.POSTGRES_HOST || 'db',

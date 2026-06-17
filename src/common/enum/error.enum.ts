@@ -1,5 +1,6 @@
 export enum ErrorMessage {
     GLOBAL_ERROR_MESSAGE = 'Une erreur est survenue.',
+    TOO_MANY_REQUESTS = 'Trop de tentatives, réessayez dans 1 minute.',
     REFRESH_TOKEN_ERROR = 'Refresh token invalide ou expiré.',
     UNAUTHORIZED_MESSAGE = 'Vous n’êtes pas autorisé.',
     USERNAME_EMAIL_ALREADY_EXISTS = 'Le nom d’utilisateur ou l’email sont déjà utilisé.',
@@ -9,4 +10,5 @@ export enum ErrorMessage {
     USER_NOT_FOUND = "Utilisateur introuvable",
     USER_LOGIN_ERROR = "Email ou mot de passe incorrect.",
     USER_CANNOT_MODIFY_OTHER = "Vous ne pouvez modifier que votre propre compte."
+
 }

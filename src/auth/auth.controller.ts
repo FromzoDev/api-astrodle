@@ -4,13 +4,17 @@ import { AuthService } from './auth.service';
 import { SignInDto } from './DTO/sign-in-dto';
 import { Public } from '../common/decorators/public.decorator';
 import { Auth } from '../common/decorators/auth.decorator';
+import { CustomThrottlerGuard } from '../common/guards/throttler.guards';
 import { ApiResponse } from '../common/interfaces/response.interface';
 import { SuccessMessage } from '../common/enum/success.enum';
+import { Throttle } from '@nestjs/throttler';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  @Throttle({ default: { limit: 5, ttl: 60000 }})
+  @UseGuards(CustomThrottlerGuard)
   @Public()
   @HttpCode(HttpStatus.OK)
   @Post('login')

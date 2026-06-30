@@ -1,5 +1,6 @@
-import {Controller, Get, Request, Param, Post, Body, Patch, ParseIntPipe, Delete, HttpStatus} from '@nestjs/common';
+import {Controller, Get, Request, Param, Post, Body, Patch, ParseIntPipe, Delete, HttpStatus, Query} from '@nestjs/common';
 import { UsersService } from './users.service';
+import { PaginationService } from '../shared/pagination/pagination.service';
 import { User } from './user.entity';
 import { createUserDTO } from './DTO/create-user-dto';
 import { updateUserDTO } from './DTO/update-user-dto';
@@ -8,6 +9,8 @@ import { ApiResponse } from '../common/interfaces/response.interface';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { Auth } from '../common/decorators/auth.decorator';
 import { Role } from '../common/enum/roles.enum';
+import { PaginationDto } from '../shared/pagination/pagination-dto';
+import { PaginationResult } from '../shared/pagination/pagination.interface';
 
 @ApiBearerAuth('JWT-auth')
 @Controller('users')
@@ -15,15 +18,26 @@ export class UsersController {
   constructor(private usersService: UsersService) {}
   
 
+  // @Auth(Role.Moderator)
+  // @Get()
+  // async getUsers(): Promise<ApiResponse<User[]>> {
+  // return await this.usersService.findAll().then(users => ({
+  //   code: HttpStatus.OK,
+  //   message: SuccessMessage.USER_FETCHED_ALL,
+  //   data: users,
+  //   }));
+  // }
+
   @Auth(Role.Moderator)
   @Get()
-  async getUsers(): Promise<ApiResponse<User[]>> {
-  return await this.usersService.findAll().then(users => ({
-    code: HttpStatus.OK,
-    message: SuccessMessage.USER_FETCHED_ALL,
-    data: users,
-  }));
-}
+  async getUsersPaginated(@Query() paginationDto: PaginationDto): Promise<ApiResponse<PaginationResult<User>>> {
+    return await this.usersService.findPaginated(paginationDto).then(users => ({
+      code: HttpStatus.OK,
+      message: SuccessMessage.USER_FETCHED_ALL,
+      data: users,
+    }));
+  }
+
 
   @Auth()
   @Get('profile')

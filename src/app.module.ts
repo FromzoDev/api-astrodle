@@ -9,6 +9,7 @@ import { User } from './users/user.entity';
 import { UserSeed } from './users/user.seed';
 import { LoggerMiddleware } from './middleware/logger.middleware';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { PaginationModule } from './shared/pagination/pagination.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
     }),
     AuthModule,
     UsersModule,
+    PaginationModule
   ],
   
   controllers: [AppController],

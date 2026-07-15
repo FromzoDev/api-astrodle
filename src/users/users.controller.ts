@@ -1,6 +1,5 @@
 import {Controller, Get, Request, Param, Post, Body, Patch, ParseIntPipe, Delete, HttpStatus, Query} from '@nestjs/common';
 import { UsersService } from './users.service';
-import { PaginationService } from '../shared/pagination/pagination.service';
 import { User } from './user.entity';
 import { createUserDTO } from './DTO/create-user-dto';
 import { updateUserDTO } from './DTO/update-user-dto';

@@ -29,7 +29,8 @@ import { PaginationModule } from './shared/pagination/pagination.module';
     }),
     AuthModule,
     UsersModule,
-    PaginationModule
+    PaginationModule,
+    
   ],
   
   controllers: [AppController],

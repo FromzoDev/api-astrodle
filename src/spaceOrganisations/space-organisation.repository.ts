@@ -17,7 +17,7 @@ export class SpaceOrganisationRepository { 
         private readonly PaginationService: PaginationService
     ){}
 
-    async findPagined(options: PaginationDto): Promise<PaginationResult<SpaceOrganisation>> {
+    async findPaginated(options: PaginationDto): Promise<PaginationResult<SpaceOrganisation>> {
         return this.PaginationService.paginate(this.spaceOrganisationRepository, options);
     }
 

@@ -1,22 +1,31 @@
 import { Module } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { UsersModule } from '../users/users.module';
 import { JwtModule } from '@nestjs/jwt';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+
+import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
-import { jwtConstants } from './constants';
+import { UsersModule } from '../users/users.module';
 import { BlacklistModule } from '../blacklist/blacklist.module';
 
 @Module({
   imports: [
     UsersModule,
     BlacklistModule,
-    JwtModule.register({
+    ConfigModule,
+
+    JwtModule.registerAsync({
       global: true,
-      secret: jwtConstants.secret,
-      signOptions: { expiresIn: '3600s' },
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET'),
+        signOptions: {
+          expiresIn: configService.get<string>('JWT_EXPIRES_IN') || '3600s',
+        },
+      }),
     }),
   ],
-  providers: [ AuthService],
+  providers: [AuthService],
   controllers: [AuthController],
   exports: [AuthService],
 })

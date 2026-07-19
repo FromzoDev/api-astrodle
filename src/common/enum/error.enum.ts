@@ -9,6 +9,8 @@ export enum ErrorMessage {
     DELETE_ERROR_MESSAGE = 'Echec de la suppression.',
     USER_NOT_FOUND = "Utilisateur introuvable",
     USER_LOGIN_ERROR = "Email ou mot de passe incorrect.",
-    USER_CANNOT_MODIFY_OTHER = "Vous ne pouvez modifier que votre propre compte."
-
+    USER_CANNOT_MODIFY_OTHER = "Vous ne pouvez modifier que votre propre compte.",
+    SPACE_ORGANISATION_ALREADY_EXISTS = "L'organisation spatiale existe déjà.",
+    SPACE_ORGANISATION_NOT_FOUND = "Organisation spatiale introuvable",
+    SPACE_ORGANISATION_CANNOT_MODIFY_OTHER = "Vous ne pouvez modifier que votre propre organisation spatiale."
 }

@@ -65,7 +65,7 @@ export class UsersService {
 
   }
 
-  async createUser(createUserDTO: createUserDTO) {
+  async createUser(createUserDTO: createUserDTO): Promise<User> {
 
     try {
       const { email, username, password } = createUserDTO;
@@ -101,7 +101,7 @@ export class UsersService {
     }
   }
 
-  async updateUser(updateUserDTO: updateUserDTO, id: number, currentUser: User) {
+  async updateUser(updateUserDTO: updateUserDTO, id: number, currentUser: User): Promise<User> {
     try {
       if (currentUser.id !== id  && !currentUser.roles.includes(Role.Admin)) {
         throw new ForbiddenException(ErrorMessage.USER_CANNOT_MODIFY_OTHER);
@@ -132,7 +132,7 @@ export class UsersService {
     }
   }
 
-  async deleteUser(id: number) {
+  async deleteUser(id: number): Promise<void> {
 
     try {
       return await this.usersRepository.deleteUser(id)

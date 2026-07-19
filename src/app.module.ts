@@ -10,16 +10,23 @@ import { UserSeed } from './users/user.seed';
 import { LoggerMiddleware } from './middleware/logger.middleware';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { PaginationModule } from './shared/pagination/pagination.module';
+import { SpaceOrganisationsModule } from './spaceOrganisations/space-organisations.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    
     ThrottlerModule.forRoot([{
       ttl: 60000, 
       limit: 5,    
     }]),
+    
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: process.env.POSTGRES_HOST || 'db',
+      host: process.env.POSTGRES_HOST || 'localhost',
       port: parseInt(process.env.POSTGRES_PORT ?? '5432'),
       username: process.env.POSTGRES_USER || 'postgres',
       password: process.env.POSTGRES_PASSWORD || 'postgres',
@@ -29,6 +36,7 @@ import { PaginationModule } from './shared/pagination/pagination.module';
     }),
     AuthModule,
     UsersModule,
+    SpaceOrganisationsModule,
     PaginationModule,
     
   ],
@@ -44,6 +52,10 @@ export class AppModule implements OnModuleInit {
   async onModuleInit() {
     
     const userRepository = this.dataSource.getRepository(User); 
+
+    console.log(process.env.POSTGRES_HOST);
+    console.log(process.env.POSTGRES_PORT);
+    console.log(process.env.POSTGRES_USER);
 
     await UserSeed.run(userRepository);
   }

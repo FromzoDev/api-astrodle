@@ -4,12 +4,11 @@ import { User } from './user.entity';
 import { createUserDTO } from './DTO/create-user-dto';
 import { updateUserDTO } from './DTO/update-user-dto';
 import { SuccessMessage } from '../common/enum/success.enum';
-import { ApiResponse } from '../common/interfaces/response.interface';
+import { ApiResponse, PaginatedApiResponse } from '../common/interfaces/response.interface';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { Auth } from '../common/decorators/auth.decorator';
 import { Role } from '../common/enum/roles.enum';
 import { PaginationDto } from '../shared/pagination/pagination-dto';
-import { PaginationResult } from '../shared/pagination/pagination.interface';
 
 @ApiBearerAuth('JWT-auth')
 @Controller('users')
@@ -29,12 +28,21 @@ export class UsersController {
 
   @Auth(Role.Moderator)
   @Get()
-  async getUsersPaginated(@Query() paginationDto: PaginationDto): Promise<ApiResponse<PaginationResult<User>>> {
-    return await this.usersService.findPaginated(paginationDto).then(users => ({
+  async getUsersPaginated( @Query() paginationDto: PaginationDto ): Promise<PaginatedApiResponse<User>> {
+
+    const result = await this.usersService.findPaginated(paginationDto);
+
+    return {
       code: HttpStatus.OK,
       message: SuccessMessage.USER_FETCHED_ALL,
-      data: users,
-    }));
+      data: result.items,
+      pagination: {
+        total: result.total,
+        page: result.page,
+        limit: result.limit,
+        lastPage: result.lastPage,
+      },
+    };
   }
 
 

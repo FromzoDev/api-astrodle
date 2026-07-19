@@ -1,9 +1,7 @@
-
-export interface PaginationResult<ResultDataType> {
-  data: ResultDataType[];
+export interface PaginationResult<T> {
+  items: T[];
   total: number;
   page: number;
   limit: number;
   lastPage: number;
 }
-

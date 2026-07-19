@@ -19,5 +19,5 @@ export class SpaceOrganisation {
     createdAt: Date;
 
     @Column()
-    updateAt: Date;
+    updatedAt: Date;
 }

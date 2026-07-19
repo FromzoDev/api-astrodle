@@ -8,4 +8,9 @@ export enum SuccessMessage {
     USER_LOGGED_IN = 'Connexion réussie',
     USER_LOGGED_OUT = 'Déconnexion réussie',
     TOKEN_REFRESHED = 'Token rafraîchi avec succès',
+    SPACE_ORGANISATION_FETCHED_ALL = "Organisations spatiales récupérées avec succès",
+    SPACE_ORGANISATION_FETCHED_BY_ID = "Organisation spatiale récupérée avec succès",
+    SPACE_ORGANISATION_CREATED = "Organisation spatiale créée avec succès",
+    SPACE_ORGANISATION_UPDATED = "Organisation spatiale mise à jour avec succès",
+    SPACE_ORGANISATION_DELETED = "Organisation spatiale supprimée avec succès",
 }

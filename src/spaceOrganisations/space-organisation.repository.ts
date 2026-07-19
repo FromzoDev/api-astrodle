@@ -5,8 +5,6 @@ import { SpaceOrganisation } from "./space-organisations.entity";
 import { PaginationService } from '../shared/pagination/pagination.service';
 import { PaginationDto } from '../shared/pagination/pagination-dto';
 import { PaginationResult } from '../shared/pagination/pagination.interface';
-import { privateDecrypt } from "crypto";
-import { promises } from "dns";
 
 
 @Injectable()
@@ -27,6 +25,10 @@ export class SpaceOrganisationRepository { 
 
     async findOneById(id: number): Promise<SpaceOrganisation | null>{
         return this.spaceOrganisationRepository.findOneBy({id});
+    }
+
+    async findbyName(name: string): Promise<SpaceOrganisation | null>{
+        return this.spaceOrganisationRepository.findOneBy({name});
     }
 
     async createSpaceOrganisation(SpaceOrganisationData: Partial<SpaceOrganisation>): Promise<SpaceOrganisation | null >{

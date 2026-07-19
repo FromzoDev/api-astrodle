@@ -13,9 +13,9 @@ import { ErrorMessage } from '../common/enum/error.enum';
 
 @Injectable()
 export class SpaceOrganisationService   {
-    constructor(private readonly spaceOrganisationRepository: SpaceOrganisationRepository) { }
+    constructor(private readonly spaceOrganisationRepository: SpaceOrganisationRepository)  { }
 
-    async findPaginated(options: PaginationDto) {
+    async findPaginated(options: PaginationDto) : Promise<PaginationResult<SpaceOrganisation>> {
         try {
             return await this.spaceOrganisationRepository.findPaginated(options);
         } catch (error) {
@@ -47,18 +47,10 @@ export class SpaceOrganisationService   {
         }
     }
 
-    async createSpaceOrganisation(createSpaceOrganisationDTO: createspaceOrganisationDTO) {
+    async findOneByName(name: string): Promise<SpaceOrganisation | null> {
         try {
-            const spaceOrganisation = await this.spaceOrganisationRepository.createSpaceOrganisation(createSpaceOrganisationDTO);
-
-            if (spaceOrganisation) {
-                throw new ConflictException(ErrorMessage.SPACE_ORGANISATION_ALREADY_EXISTS);
-            }
-
-            const spaceOrganisationToSave = {...createSpaceOrganisationDTO};
-
-            return await this.spaceOrganisationRepository.createSpaceOrganisation(spaceOrganisationToSave);
-            
+            const spaceOrganisation = await this.spaceOrganisationRepository.findbyName(name);
+            return spaceOrganisation;
         } catch (error) {
             if (error instanceof HttpException) {
                 throw error;
@@ -68,7 +60,31 @@ export class SpaceOrganisationService   {
         }
     }
 
-    async updateSpaceOrganisation(id: number, updateSpaceOrganisationDTO: updateSpaceOrganisationDTO) {
+    async createSpaceOrganisation(createSpaceOrganisationDTO: createspaceOrganisationDTO) : Promise<SpaceOrganisation> {
+        try {
+            const spaceOrganisationExisting = await this.spaceOrganisationRepository.findbyName(createSpaceOrganisationDTO.name);
+
+            if (spaceOrganisationExisting) {
+                throw new ConflictException(ErrorMessage.SPACE_ORGANISATION_ALREADY_EXISTS);
+            }
+
+            const spaceOrganisationToSave = {...createSpaceOrganisationDTO, createdAt: new Date(), updatedAt: new Date()};
+
+            return await this.spaceOrganisationRepository.createSpaceOrganisation(spaceOrganisationToSave);
+            
+        } catch (error) {
+            console.error(error);
+            if (error instanceof HttpException) {
+
+                console.error(error);
+                throw error;
+            }
+
+            throw new InternalServerErrorException(ErrorMessage.GLOBAL_ERROR_MESSAGE);
+        }
+    }
+
+    async updateSpaceOrganisation(id: number, updateSpaceOrganisationDTO: updateSpaceOrganisationDTO) : Promise<SpaceOrganisation> {
         try {
             const spaceOrganisation = await this.spaceOrganisationRepository.findOneById(id);
             
@@ -76,7 +92,7 @@ export class SpaceOrganisationService   {
                 throw new NotFoundException(ErrorMessage.SPACE_ORGANISATION_NOT_FOUND);
             }
 
-            const spaceOrganisationToUpdate = {...spaceOrganisation, ...updateSpaceOrganisationDTO};
+            const spaceOrganisationToUpdate = {...spaceOrganisation, ...updateSpaceOrganisationDTO, updatedAt: new Date()};
             
             return await this.spaceOrganisationRepository.updateSpaceOrganisation(id, spaceOrganisationToUpdate);
         } catch (error) {
@@ -88,7 +104,7 @@ export class SpaceOrganisationService   {
         }
     }
 
-    async deleteSpaceOrganisation(id: number) {
+    async deleteSpaceOrganisation(id: number): Promise<void> {
         try {
             const spaceOrganisation = await this.spaceOrganisationRepository.findOneById(id);
             

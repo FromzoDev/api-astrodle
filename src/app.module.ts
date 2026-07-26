@@ -12,6 +12,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { PaginationModule } from './shared/pagination/pagination.module';
 import { SpaceOrganisationsModule } from './spaceOrganisations/space-organisations.module';
 import { ConfigModule } from '@nestjs/config';
+import { FilterModule } from './shared/filter/filter.module';
 
 @Module({
   imports: [
@@ -38,7 +39,7 @@ import { ConfigModule } from '@nestjs/config';
     UsersModule,
     SpaceOrganisationsModule,
     PaginationModule,
-    
+    FilterModule,
   ],
   
   controllers: [AppController],

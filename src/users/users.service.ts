@@ -6,15 +6,15 @@ import { ErrorMessage } from '../common/enum/error.enum';
 import { updateUserDTO } from './DTO/update-user-dto';
 import * as bcrypt from 'bcrypt';
 import { Role } from '../common/enum/roles.enum';
-import { PaginationDto } from '../shared/pagination/pagination-dto';
 import { PaginationResult } from '../shared/pagination/pagination.interface';
+import { userQueryDto } from './DTO/user-query-dto';
 
 
 @Injectable()
 export class UsersService {
   constructor(private readonly usersRepository: UsersRepository) { }
 
-  async findPaginated(options: PaginationDto): Promise<PaginationResult<User>> {
+  async findPaginated(options: userQueryDto): Promise<PaginationResult<User>> {
     try {
       return await this.usersRepository.findPaginated(options);
     } catch (error) {

@@ -8,7 +8,9 @@ import { ApiResponse, PaginatedApiResponse } from '../common/interfaces/response
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { Auth } from '../common/decorators/auth.decorator';
 import { Role } from '../common/enum/roles.enum';
-import { PaginationDto } from '../shared/pagination/pagination-dto';
+
+import { userQueryDto } from './DTO/user-query-dto';
+import { ErrorMessage } from '../common/enum/error.enum';
 
 @ApiBearerAuth('JWT-auth')
 @Controller('users')
@@ -28,13 +30,13 @@ export class UsersController {
 
   @Auth(Role.Moderator)
   @Get()
-  async getUsersPaginated( @Query() paginationDto: PaginationDto ): Promise<PaginatedApiResponse<User>> {
+  async getUsersPaginated( @Query() userQueryDto: userQueryDto ): Promise<PaginatedApiResponse<User>> {
 
-    const result = await this.usersService.findPaginated(paginationDto);
+    const result = await this.usersService.findPaginated(userQueryDto);
 
     return {
       code: HttpStatus.OK,
-      message: SuccessMessage.USER_FETCHED_ALL,
+      message: result.items.length > 0 ? SuccessMessage.USER_FETCHED_ALL : ErrorMessage.GLOBAL_NOT_FOUND_MESSAGE,
       data: result.items,
       pagination: {
         total: result.total,

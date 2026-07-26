@@ -5,6 +5,8 @@ import { SpaceOrganisation } from "./space-organisations.entity";
 import { PaginationService } from '../shared/pagination/pagination.service';
 import { PaginationDto } from '../shared/pagination/pagination-dto';
 import { PaginationResult } from '../shared/pagination/pagination.interface';
+import { FilterService } from "../shared/filter/filter.service";
+import { SpaceOrganisationQueryDto } from "./DTO/space-organisation-query-dto";
 
 
 @Injectable()
@@ -12,11 +14,26 @@ export class SpaceOrganisationRepository { 
     constructor(
         @InjectRepository(SpaceOrganisation)
         private readonly spaceOrganisationRepository: Repository<SpaceOrganisation>,
-        private readonly PaginationService: PaginationService
+        private readonly PaginationService: PaginationService,
+        private readonly filterService: FilterService
     ){}
 
-    async findPaginated(options: PaginationDto): Promise<PaginationResult<SpaceOrganisation>> {
-        return this.PaginationService.paginate(this.spaceOrganisationRepository, options);
+    async findPaginated(options: SpaceOrganisationQueryDto): Promise<PaginationResult<SpaceOrganisation>> {
+        let queryBuilder = this.spaceOrganisationRepository.createQueryBuilder('spaceOrganisation');
+
+        queryBuilder = this.filterService.applySearch(queryBuilder, options.search, ['spaceOrganisation.name', 'spaceOrganisation.country']);
+
+          const exactFilters: Array<{ field: string; value: unknown }> = [
+            { field: 'spaceOrganisation.country', value: options.country },
+        ];
+
+        for (const { field, value } of exactFilters) {
+            queryBuilder = this.filterService.applyExactFilter(queryBuilder, value, field);
+        }
+
+        queryBuilder = this.filterService.applyOrderFilter(queryBuilder, options.orderBy, options.orderDirection);
+
+        return this.PaginationService.paginate(queryBuilder, options);
     }
 
     async findOne(options: FindOneOptions<SpaceOrganisation>) : Promise<SpaceOrganisation | null >{

@@ -5,7 +5,7 @@ import { updateSpaceOrganisationDTO } from './DTO/space-organisations-update-use
 import { ApiResponse, PaginatedApiResponse } from '../common/interfaces/response.interface';
 import { SuccessMessage } from '../common/enum/success.enum';
 import { ApiBearerAuth } from '@nestjs/swagger';
-import { PaginationDto } from '../shared/pagination/pagination-dto';
+import { SpaceOrganisationQueryDto } from './DTO/space-organisation-query-dto';
 import { SpaceOrganisation } from './space-organisations.entity';
 import { Auth } from '../common/decorators/auth.decorator';
 import { Role } from '../common/enum/roles.enum';
@@ -18,10 +18,10 @@ export class SpaceOrganisationController {
     constructor(private readonly spaceOrganisationService: SpaceOrganisationService) { }
 
     @Get()
-    async getSpaceOrganisationsPaginated( @Query() paginationDto: PaginationDto ): Promise<PaginatedApiResponse<SpaceOrganisation>> {
+    async getSpaceOrganisationsPaginated( @Query() queryDto: SpaceOrganisationQueryDto ): Promise<PaginatedApiResponse<SpaceOrganisation>> {
 
         const result = await this.spaceOrganisationService.findPaginated(
-            paginationDto,
+            queryDto,
         );
 
         return {

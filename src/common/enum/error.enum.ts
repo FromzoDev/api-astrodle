@@ -1,5 +1,6 @@
 export enum ErrorMessage {
     GLOBAL_ERROR_MESSAGE = 'Une erreur est survenue.',
+    GLOBAL_NOT_FOUND_MESSAGE = 'Ressource introuvable.',
     TOO_MANY_REQUESTS = 'Trop de tentatives, réessayez dans 1 minute.',
     REFRESH_TOKEN_ERROR = 'Refresh token invalide ou expiré.',
     UNAUTHORIZED_MESSAGE = 'Vous n’êtes pas autorisé.',

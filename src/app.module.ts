@@ -13,6 +13,7 @@ import { PaginationModule } from './shared/pagination/pagination.module';
 import { SpaceOrganisationsModule } from './spaceOrganisations/space-organisations.module';
 import { ConfigModule } from '@nestjs/config';
 import { FilterModule } from './shared/filter/filter.module';
+import { ImageUploadModule } from './shared/upload/image-upload.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { FilterModule } from './shared/filter/filter.module';
     SpaceOrganisationsModule,
     PaginationModule,
     FilterModule,
+    ImageUploadModule,
   ],
   
   controllers: [AppController],

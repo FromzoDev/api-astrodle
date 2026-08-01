@@ -9,6 +9,7 @@ import { SpaceOrganisationQueryDto } from './DTO/space-organisation-query-dto';
 import { SpaceOrganisation } from './space-organisations.entity';
 import { Auth } from '../common/decorators/auth.decorator';
 import { Role } from '../common/enum/roles.enum';
+import { ErrorMessage } from '../common/enum/error.enum';
 
 
 
@@ -26,7 +27,7 @@ export class SpaceOrganisationController {
 
         return {
             code: HttpStatus.OK,
-            message: SuccessMessage.SPACE_ORGANISATION_FETCHED_ALL,
+            message: result.items.length > 0 ? SuccessMessage.USER_FETCHED_ALL : ErrorMessage.GLOBAL_NOT_FOUND_MESSAGE,
             data: result.items,
             pagination: {
             total: result.total,

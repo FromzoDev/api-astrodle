@@ -15,6 +15,9 @@ export class SpaceOrganisation {
     @Column()
     country: Country;
 
+    @Column({nullable: true})
+    agencyLogo: string;
+
     @Column()
     createdAt: Date;
 

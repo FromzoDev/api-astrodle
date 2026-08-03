@@ -8,11 +8,16 @@ import * as bcrypt from 'bcrypt';
 import { Role } from '../common/enum/roles.enum';
 import { PaginationResult } from '../shared/pagination/pagination.interface';
 import { userQueryDto } from './DTO/user-query-dto';
+import { ImageUploadService } from '../shared/upload/image-upload.service';
+import { MulterFile } from '../types/multer-file.type';
 
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly usersRepository: UsersRepository) { }
+  constructor(
+    private readonly usersRepository: UsersRepository,
+    private readonly imageUploadService: ImageUploadService
+  ) { }
 
   async findPaginated(options: userQueryDto): Promise<PaginationResult<User>> {
     try {
@@ -65,7 +70,7 @@ export class UsersService {
 
   }
 
-  async createUser(createUserDTO: createUserDTO): Promise<User> {
+  async createUser(createUserDTO: createUserDTO, file?: MulterFile): Promise<User> {
 
     try {
       const { email, username, password } = createUserDTO;
@@ -89,7 +94,18 @@ export class UsersService {
         password: hashedPassword,
       };
 
-      return await this.usersRepository.createUser(userToSave);
+      const savedUser = await this.usersRepository.createUser(userToSave);
+
+      if (file && savedUser) {
+        const avatarUrl = await this.imageUploadService.uploadImage(file, 'users', savedUser.id, {
+          maxSizeMb: 5,
+        });
+
+        return await this.usersRepository.updateUser(savedUser.id, { profilePicture: avatarUrl });
+      }
+
+      return savedUser;
+
     } catch (error) {
 
       if (error instanceof HttpException) {
@@ -100,10 +116,10 @@ export class UsersService {
 
     }
   }
-
-  async updateUser(updateUserDTO: updateUserDTO, id: number, currentUser: User): Promise<User> {
+  
+  async updateUser( updateUserDTO: updateUserDTO, id: number, currentUser: User, file?: MulterFile, ): Promise<User> {
     try {
-      if (currentUser.id !== id  && !currentUser.roles.includes(Role.Admin)) {
+      if (currentUser.id !== id && !currentUser.roles.includes(Role.Admin)) {
         throw new ForbiddenException(ErrorMessage.USER_CANNOT_MODIFY_OTHER);
       }
 
@@ -121,7 +137,19 @@ export class UsersService {
         throw new ConflictException(ErrorMessage.USERNAME_ALREADY_EXISTS);
       }
 
-      return this.usersRepository.updateUser(id, updateUserDTO);
+      let avatarUrl: string | undefined;
+
+      if (file) {
+        avatarUrl = await this.imageUploadService.uploadImage(file, 'users', id, {
+          maxSizeMb: 5,
+        });
+      }
+
+      return this.usersRepository.updateUser(id, {
+        ...updateUserDTO,
+        ...(avatarUrl && { avatarUrl }),
+      });
+
     } catch (error) {
 
       if (error instanceof HttpException) {

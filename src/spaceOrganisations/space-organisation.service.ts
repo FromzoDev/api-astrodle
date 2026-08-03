@@ -7,11 +7,16 @@ import { Role } from '../common/enum/roles.enum';
 import { SpaceOrganisationRepository } from './space-organisation.repository';
 import { ErrorMessage } from '../common/enum/error.enum';
 import { SpaceOrganisationQueryDto } from './DTO/space-organisation-query-dto';
+import { ImageUploadService } from '../shared/upload/image-upload.service';
+import { MulterFile } from '../types/multer-file.type';
 
 
 @Injectable()
 export class SpaceOrganisationService   {
-    constructor(private readonly spaceOrganisationRepository: SpaceOrganisationRepository)  { }
+    constructor(
+        private readonly spaceOrganisationRepository: SpaceOrganisationRepository,
+        private readonly ImageUploadService: ImageUploadService,
+    )  { }
 
     async findPaginated(options: SpaceOrganisationQueryDto) : Promise<PaginationResult<SpaceOrganisation>> {
         try {
@@ -58,48 +63,60 @@ export class SpaceOrganisationService   {
         }
     }
 
-    async createSpaceOrganisation(createSpaceOrganisationDTO: createspaceOrganisationDTO) : Promise<SpaceOrganisation> {
-        try {
-            const spaceOrganisationExisting = await this.spaceOrganisationRepository.findbyName(createSpaceOrganisationDTO.name);
+    async createSpaceOrganisation(
+        spaceOrganisationData: Partial<SpaceOrganisation>,
+        file?: MulterFile,
+    ): Promise<SpaceOrganisation | null> {
 
-            if (spaceOrganisationExisting) {
-                throw new ConflictException(ErrorMessage.SPACE_ORGANISATION_ALREADY_EXISTS);
-            }
+        const saved = await this.spaceOrganisationRepository.createSpaceOrganisation(spaceOrganisationData);
 
-            const spaceOrganisationToSave = {...createSpaceOrganisationDTO, createdAt: new Date(), updatedAt: new Date()};
+        if (file && saved) {
+        const logoUrl = await this.ImageUploadService.uploadImage(file, 'space-organisations', saved.id, {
+            maxSizeMb: 10,
+        });
 
-            return await this.spaceOrganisationRepository.createSpaceOrganisation(spaceOrganisationToSave);
-            
-        } catch (error) {
-            console.error(error);
-            if (error instanceof HttpException) {
-
-                console.error(error);
-                throw error;
-            }
-
-            throw new InternalServerErrorException(ErrorMessage.GLOBAL_ERROR_MESSAGE);
+        return this.spaceOrganisationRepository.updateSpaceOrganisation(saved.id, { agencyLogo: logoUrl });
         }
+
+        return saved;
     }
 
-    async updateSpaceOrganisation(id: number, updateSpaceOrganisationDTO: updateSpaceOrganisationDTO) : Promise<SpaceOrganisation> {
-        try {
-            const spaceOrganisation = await this.spaceOrganisationRepository.findOneById(id);
-            
-            if (!spaceOrganisation) {
-                throw new NotFoundException(ErrorMessage.SPACE_ORGANISATION_NOT_FOUND);
-            }
+    async updateSpaceOrganisation(
+    id: number,
+    updateSpaceOrganisationDTO: updateSpaceOrganisationDTO,
+    file?: MulterFile,
+    ): Promise<SpaceOrganisation> {
+    try {
+        const spaceOrganisation = await this.spaceOrganisationRepository.findOneById(id);
 
-            const spaceOrganisationToUpdate = {...spaceOrganisation, ...updateSpaceOrganisationDTO, updatedAt: new Date()};
-            
-            return await this.spaceOrganisationRepository.updateSpaceOrganisation(id, spaceOrganisationToUpdate);
-        } catch (error) {
-            if (error instanceof HttpException) {
-                throw error;
-            }
-
-            throw new InternalServerErrorException(ErrorMessage.UPDATE_ERROR_MESSAGE);
+        if (!spaceOrganisation) {
+        throw new NotFoundException(ErrorMessage.SPACE_ORGANISATION_NOT_FOUND);
         }
+
+        let logoUrl: string | undefined;
+
+        if (file) {
+        logoUrl = await this.ImageUploadService.uploadImage(file, 'space-organisations', id, {
+            maxSizeMb: 10,
+        });
+        }
+
+        const spaceOrganisationToUpdate = {
+        ...spaceOrganisation,
+        ...updateSpaceOrganisationDTO,
+        ...(logoUrl && { logoUrl }),
+        updatedAt: new Date(),
+        };
+
+        return await this.spaceOrganisationRepository.updateSpaceOrganisation(id, spaceOrganisationToUpdate);
+
+    } catch (error) {
+        if (error instanceof HttpException) {
+        throw error;
+        }
+
+        throw new InternalServerErrorException(ErrorMessage.UPDATE_ERROR_MESSAGE);
+    }
     }
 
     async deleteSpaceOrganisation(id: number): Promise<void> {

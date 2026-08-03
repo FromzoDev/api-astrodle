@@ -8,7 +8,10 @@ import { ApiResponse, PaginatedApiResponse } from '../common/interfaces/response
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { Auth } from '../common/decorators/auth.decorator';
 import { Role } from '../common/enum/roles.enum';
-
+import { UseInterceptors, UploadedFile } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiConsumes, ApiBody } from '@nestjs/swagger';
+import { MulterFile } from '../types/multer-file.type';
 import { userQueryDto } from './DTO/user-query-dto';
 import { ErrorMessage } from '../common/enum/error.enum';
 
@@ -16,17 +19,7 @@ import { ErrorMessage } from '../common/enum/error.enum';
 @Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
-  
 
-  // @Auth(Role.Moderator)
-  // @Get()
-  // async getUsers(): Promise<ApiResponse<User[]>> {
-  // return await this.usersService.findAll().then(users => ({
-  //   code: HttpStatus.OK,
-  //   message: SuccessMessage.USER_FETCHED_ALL,
-  //   data: users,
-  //   }));
-  // }
 
   @Auth(Role.Moderator)
   @Get()
@@ -74,8 +67,24 @@ export class UsersController {
   @ApiBearerAuth('JWT-auth')
   @Auth(Role.Admin)
   @Post()
-  async createUser(@Body() createUserDTO: createUserDTO): Promise<ApiResponse<User>> {
-    const user = await this.usersService.createUser(createUserDTO);
+  @UseInterceptors(FileInterceptor('file'))
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        email: { type: 'string' },
+        username: { type: 'string' },
+        password: { type: 'string' },
+        file: { type: 'string', format: 'binary' },
+      },
+    },
+  })
+  async createUser(
+    @Body() createUserDTO: createUserDTO,
+    @UploadedFile() file: MulterFile,
+  ): Promise<ApiResponse<User>> {
+    const user = await this.usersService.createUser(createUserDTO, file);
 
     return {
       code: HttpStatus.CREATED,
@@ -87,8 +96,25 @@ export class UsersController {
   @ApiBearerAuth('JWT-auth')
   @Auth(Role.Admin)
   @Patch('/:id')
-  async updateUser(@Param('id', ParseIntPipe) id: number, @Body() updateUserDTO: updateUserDTO, @Request() req ): Promise<ApiResponse<User | null>> {
-    const updatedUser = await this.usersService.updateUser(updateUserDTO, id, req.user);
+  @UseInterceptors(FileInterceptor('file'))
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        username: { type: 'string' },
+        email: { type: 'string' },
+        file: { type: 'string', format: 'binary' },
+      },
+    },
+  })
+  async updateUser(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateUserDTO: updateUserDTO,
+    @Request() req,
+    @UploadedFile() file: MulterFile,
+  ): Promise<ApiResponse<User | null>> {
+    const updatedUser = await this.usersService.updateUser(updateUserDTO, id, req.user, file);
 
     return {
       code: HttpStatus.OK,

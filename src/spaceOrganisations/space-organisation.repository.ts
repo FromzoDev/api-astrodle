@@ -9,6 +9,7 @@ import { FilterService } from "../shared/filter/filter.service";
 import { SpaceOrganisationQueryDto } from "./DTO/space-organisation-query-dto";
 
 
+
 @Injectable()
 export class SpaceOrganisationRepository { 
     constructor(

@@ -25,10 +25,18 @@ export class User {
   @Column({ unique: true })
   username: string;
 
+  @Column({ nullable: true })
+  profilePicture: string;
   
   @Column()
   password: string;
 
   @Column({ default: true })
   isActive: boolean;
+
+  @Column()
+  createdAt: Date;
+
+  @Column()
+  updatedAt: Date;
 }

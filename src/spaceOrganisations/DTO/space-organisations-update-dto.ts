@@ -1,6 +1,5 @@
 import { IsEnum, IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { Role } from '../../common/enum/roles.enum';
 import { Country } from '../../common/enum/country.enum';
 
 export class updateSpaceOrganisationDTO {
@@ -38,6 +37,8 @@ export class updateSpaceOrganisationDTO {
      @IsNotEmpty()
      @IsEnum(Country)
      country: Country;
+
+     
      
 
 }

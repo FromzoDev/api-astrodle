@@ -3,7 +3,6 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { FindOneOptions, Repository } from "typeorm";
 import { SpaceOrganisation } from "./space-organisations.entity";
 import { PaginationService } from '../shared/pagination/pagination.service';
-import { PaginationDto } from '../shared/pagination/pagination-dto';
 import { PaginationResult } from '../shared/pagination/pagination.interface';
 import { FilterService } from "../shared/filter/filter.service";
 import { SpaceOrganisationQueryDto } from "./DTO/space-organisation-query-dto";

@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Param, Put, Delete, ParseIntPipe, HttpStatus, Query, UseInterceptors, UploadedFile } from '@nestjs/common';
 import { SpaceOrganisationService } from './space-organisation.service';
-import { createspaceOrganisationDTO } from './DTO/space-organisations-create-user-dto';
-import { updateSpaceOrganisationDTO } from './DTO/space-organisations-update-user-dto';
+import { createspaceOrganisationDTO } from './DTO/space-organisations-create-dto';
+import { updateSpaceOrganisationDTO } from './DTO/space-organisations-update-dto';
 import { ApiResponse, PaginatedApiResponse } from '../common/interfaces/response.interface';
 import { SuccessMessage } from '../common/enum/success.enum';
 import { ApiBearerAuth, ApiBody, ApiConsumes } from '@nestjs/swagger';
@@ -64,6 +64,7 @@ export class SpaceOrganisationController {
     },
     })
     @Post()
+    @ApiConsumes('multipart/form-data')
     async createSpaceOrganisation(@Body() createSpaceOrganisationDTO: createspaceOrganisationDTO, @UploadedFile() file?: MulterFile): Promise<ApiResponse<SpaceOrganisation>> {
         return await this.spaceOrganisationService.createSpaceOrganisation(createSpaceOrganisationDTO, file).then(spaceOrganisation => ({
             code: HttpStatus.CREATED,

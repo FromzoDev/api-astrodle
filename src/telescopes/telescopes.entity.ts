@@ -11,10 +11,10 @@ export class Telescope {
     name: string;
 
     @Column()
-    image: string;
+    telescopeImage: string;
     
     @Column()
-    telecopeLocation: TelescopeLocation;
+    telescopeLocation: TelescopeLocation;
 
     @Column()
     telescopeSpectrum: TelescopeSpectrum;

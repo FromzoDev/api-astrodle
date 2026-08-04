@@ -22,6 +22,8 @@ export class UserSeed {
         username: 'Admin',
         lastName: 'User',
         isActive: true,
+        createdAt: new Date(),
+        updatedAt: new Date(),
         roles: [Role.Admin],
       });
       console.log('User admin créé');

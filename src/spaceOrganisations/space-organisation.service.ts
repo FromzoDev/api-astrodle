@@ -1,9 +1,8 @@
 import { Injectable, HttpException, InternalServerErrorException, NotFoundException, ConflictException} from '@nestjs/common';
 import { SpaceOrganisation } from './space-organisations.entity';
-import { createspaceOrganisationDTO } from './DTO/space-organisations-create-user-dto';
-import { updateSpaceOrganisationDTO } from './DTO/space-organisations-update-user-dto';
+import { createspaceOrganisationDTO } from './DTO/space-organisations-create-dto';
+import { updateSpaceOrganisationDTO } from './DTO/space-organisations-update-dto';
 import { PaginationResult } from '../shared/pagination/pagination.interface';
-import { Role } from '../common/enum/roles.enum';
 import { SpaceOrganisationRepository } from './space-organisation.repository';
 import { ErrorMessage } from '../common/enum/error.enum';
 import { SpaceOrganisationQueryDto } from './DTO/space-organisation-query-dto';
@@ -64,18 +63,18 @@ export class SpaceOrganisationService   {
     }
 
     async createSpaceOrganisation(
-        spaceOrganisationData: Partial<SpaceOrganisation>,
+        createSpaceOrganisationDTO: createspaceOrganisationDTO,
         file?: MulterFile,
     ): Promise<SpaceOrganisation | null> {
 
-        const saved = await this.spaceOrganisationRepository.createSpaceOrganisation(spaceOrganisationData);
+        const saved = await this.spaceOrganisationRepository.createSpaceOrganisation(createSpaceOrganisationDTO);
 
         if (file && saved) {
-        const logoUrl = await this.ImageUploadService.uploadImage(file, 'space-organisations', saved.id, {
-            maxSizeMb: 10,
-        });
+            const logoUrl = await this.ImageUploadService.uploadImage(file, 'space-organisations', saved.id, {
+                maxSizeMb: 10,
+            });
 
-        return this.spaceOrganisationRepository.updateSpaceOrganisation(saved.id, { agencyLogo: logoUrl });
+            return this.spaceOrganisationRepository.updateSpaceOrganisation(saved.id, { agencyLogo: logoUrl });
         }
 
         return saved;
@@ -105,7 +104,6 @@ export class SpaceOrganisationService   {
         ...spaceOrganisation,
         ...updateSpaceOrganisationDTO,
         ...(logoUrl && { logoUrl }),
-        updatedAt: new Date(),
         };
 
         return await this.spaceOrganisationRepository.updateSpaceOrganisation(id, spaceOrganisationToUpdate);

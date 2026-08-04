@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, UpdateDateColumn, CreateDateColumn } from "typeorm";
 import { Country } from "../common/enum/country.enum"; 
 
 @Entity()
@@ -18,9 +18,9 @@ export class SpaceOrganisation {
     @Column({nullable: true})
     agencyLogo: string;
 
-    @Column()
+    @CreateDateColumn()
     createdAt: Date;
 
-    @Column()
+    @UpdateDateColumn()
     updatedAt: Date;
 }

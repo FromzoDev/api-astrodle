@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional, IsString, IsIn, IsEnum } from 'class-validator';
+import { IsOptional, IsIn, IsEnum } from 'class-validator';
 import { FilterDto } from '../../shared/filter/filter-dto';
 import { Country } from '../../common/enum/country.enum'; 
 

@@ -1,5 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable } from 'typeorm';
 import { TelescopeLocation, TelescopeSpectrum } from '../common/enum/telecope.enum';
+import { SpaceOrganisation } from '../spaceOrganisations/space-organisations.entity';
 
 
 @Entity()
@@ -21,6 +22,15 @@ export class Telescope {
 
     @Column()
     telescopeOperator: string;
+
+    @ManyToMany(() => SpaceOrganisation, (spaceOrganisation) => spaceOrganisation.telescopes)
+    @JoinTable({
+      name: 'telescope_space_organisation',
+      joinColumn: { name: 'telescopeId', referencedColumnName: 'id' },
+      inverseJoinColumn: { name: 'spaceOrganisationId', referencedColumnName: 'id' },
+    })
+    spaceOrganisations: SpaceOrganisation[];
+
 
     @Column()
     createdAt: Date;

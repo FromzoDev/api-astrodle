@@ -1,5 +1,6 @@
-import { Entity, Column, PrimaryGeneratedColumn, UpdateDateColumn, CreateDateColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, UpdateDateColumn, CreateDateColumn, ManyToMany } from "typeorm";
 import { Country } from "../common/enum/country.enum"; 
+import { Telescope } from "../telescopes/telescopes.entity";
 
 @Entity()
 export class SpaceOrganisation {
@@ -17,6 +18,10 @@ export class SpaceOrganisation {
 
     @Column({nullable: true})
     agencyLogo: string;
+
+    @Column()
+    @ManyToMany(() => Telescope, (telescope) => telescope.spaceOrganisations)
+    telescopes: Telescope[];
 
     @CreateDateColumn()
     createdAt: Date;

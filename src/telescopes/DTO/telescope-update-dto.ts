@@ -18,11 +18,6 @@ export class updateTelescopeDTO {
   @IsEnum(TelescopeSpectrum)
   telescopeSpectrum?: TelescopeSpectrum;
 
-  @ApiProperty({ required: false })
-  @IsOptional()
-  @IsString()
-  telescopeOperator?: string;
-
   @ApiProperty({ required: false, type: [Number], description: 'IDs des organisations associées' })
   @IsOptional()
   @IsArray()

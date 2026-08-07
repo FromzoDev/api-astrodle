@@ -14,11 +14,7 @@ export class createTelescopeDTO {
   @ApiProperty({ enum: TelescopeSpectrum })
   @IsEnum(TelescopeSpectrum)
   telescopeSpectrum: TelescopeSpectrum;
-
-  @ApiProperty()
-  @IsString()
-  telescopeOperator: string;
-
+  
   @ApiProperty({ type: [Number], description: 'IDs des organisations associées' })
   @IsArray()
   @IsInt({ each: true })

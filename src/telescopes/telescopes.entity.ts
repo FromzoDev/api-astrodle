@@ -20,9 +20,6 @@ export class Telescope {
     @Column()
     telescopeSpectrum: TelescopeSpectrum;
 
-    @Column()
-    telescopeOperator: string;
-
     @ManyToMany(() => SpaceOrganisation, (spaceOrganisation) => spaceOrganisation.telescopes)
     @JoinTable({
       name: 'telescope_space_organisation',
@@ -30,7 +27,6 @@ export class Telescope {
       inverseJoinColumn: { name: 'spaceOrganisationId', referencedColumnName: 'id' },
     })
     spaceOrganisations: SpaceOrganisation[];
-
 
     @Column()
     createdAt: Date;

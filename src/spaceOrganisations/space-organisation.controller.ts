@@ -29,7 +29,7 @@ export class SpaceOrganisationController {
 
         return {
             code: HttpStatus.OK,
-            message: result.items.length > 0 ? SuccessMessage.USER_FETCHED_ALL : ErrorMessage.GLOBAL_NOT_FOUND_MESSAGE,
+            message: result.items.length > 0 ? SuccessMessage.SPACE_ORGANISATION_FETCHED_ALL : ErrorMessage.GLOBAL_NOT_FOUND_MESSAGE,
             data: result.items,
             pagination: {
             total: result.total,

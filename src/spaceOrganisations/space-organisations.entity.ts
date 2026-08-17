@@ -19,7 +19,6 @@ export class SpaceOrganisation {
     @Column({nullable: true})
     agencyLogo: string;
 
-    @Column()
     @ManyToMany(() => Telescope, (telescope) => telescope.spaceOrganisations)
     telescopes: Telescope[];
 

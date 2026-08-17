@@ -5,12 +5,10 @@ import { StringValue } from 'ms';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { UsersModule } from '../users/users.module';
-import { BlacklistModule } from '../blacklist/blacklist.module';
 
 @Module({
   imports: [
     UsersModule,
-    BlacklistModule,
     ConfigModule,
 
     JwtModule.registerAsync({

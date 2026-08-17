@@ -14,6 +14,9 @@ import { SpaceOrganisationsModule } from './spaceOrganisations/space-organisatio
 import { ConfigModule } from '@nestjs/config';
 import { FilterModule } from './shared/filter/filter.module';
 import { ImageUploadModule } from './shared/upload/image-upload.module';
+import { TelescopeModule } from './telescopes/telescopes.module';
+import { AmateurOwnerModule } from './amateur-owner/amateur-owner.module';
+import { BlacklistModule } from './blacklist/blacklist.module';
 
 @Module({
   imports: [
@@ -37,11 +40,14 @@ import { ImageUploadModule } from './shared/upload/image-upload.module';
       autoLoadEntities: true,
     }),
     AuthModule,
+    BlacklistModule,
     UsersModule,
     SpaceOrganisationsModule,
     PaginationModule,
     FilterModule,
     ImageUploadModule,
+    AmateurOwnerModule,
+    TelescopeModule,
   ],
   
   controllers: [AppController],

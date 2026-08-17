@@ -19,7 +19,8 @@ export class TelescopeRepository {
   async findPaginated(options: TelescopeQueryDto): Promise<PaginationResult<Telescope>> {
     let queryBuilder = this.telescopeRepository
       .createQueryBuilder('telescope')
-      .leftJoinAndSelect('telescope.spaceOrganisations', 'spaceOrganisation');
+      .leftJoinAndSelect('telescope.spaceOrganisations', 'spaceOrganisation')
+      .leftJoinAndSelect('telescope.amateurOwner', 'amateurOwner')
 
     queryBuilder = this.filterService.applySearch(queryBuilder, options.search, [
       'telescope.name',
@@ -28,6 +29,7 @@ export class TelescopeRepository {
     const exactFilters: Array<{ field: string; value: unknown }> = [
       { field: 'telescope.telescopeLocation', value: options.telescopeLocation },
       { field: 'telescope.telescopeSpectrum', value: options.telescopeSpectrum },
+      { field: 'telescope.isAmateur', value: options.isAmateur },
     ];
 
     for (const { field, value } of exactFilters) {
@@ -56,7 +58,7 @@ export class TelescopeRepository {
   async findOneById(id: number): Promise<Telescope | null> {
     return this.telescopeRepository.findOne({
       where: { id },
-      relations: ['spaceOrganisations'],
+      relations: ['spaceOrganisations', 'amateurOwner'],
     });
   }
 

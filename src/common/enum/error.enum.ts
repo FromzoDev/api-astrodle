@@ -13,5 +13,7 @@ export enum ErrorMessage {
     USER_CANNOT_MODIFY_OTHER = "Vous ne pouvez modifier que votre propre compte.",
     SPACE_ORGANISATION_ALREADY_EXISTS = "L'organisation spatiale existe déjà.",
     SPACE_ORGANISATION_NOT_FOUND = "Organisation spatiale introuvable",
-    SPACE_ORGANISATION_CANNOT_MODIFY_OTHER = "Vous ne pouvez modifier que votre propre organisation spatiale."
+    SPACE_ORGANISATION_CANNOT_MODIFY_OTHER = "Vous ne pouvez modifier que votre propre organisation spatiale.",
+    AMATEUR_OWNER_NOT_FOUND = "Propriétaire amateur introuvable",
+    AMATEUR_OWNER_CONSENT_REQUIRES_NAME = "Le nom et prénom sont requis si le consentement à l'affichage est donné",
 }

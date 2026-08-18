@@ -23,4 +23,9 @@ export enum SuccessMessage {
     TELESCOPE_CREATED = "Télescope créé avec succès",
     TELESCOPE_UPDATED = "Télescope mis à jour avec succès",
     TELESCOPE_DELETED = "Télescope supprimé avec succès",
+    PERSONALITY_FETCHED_ALL = "Personnalités récupérées avec succès",
+    PERSONALITY_FETCHED_BY_ID = "Personnalité récupérée avec succès",
+    PERSONALITY_CREATED = "Personnalité créée avec succès",
+    PERSONALITY_UPDATED = "Personnalité mise à jour avec succès",
+    PERSONALITY_DELETED = "Personnalité supprimée avec succès",
 }

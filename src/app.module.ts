@@ -10,16 +10,28 @@ import { UserSeed } from './users/user.seed';
 import { LoggerMiddleware } from './middleware/logger.middleware';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { PaginationModule } from './shared/pagination/pagination.module';
+import { SpaceOrganisationsModule } from './spaceOrganisations/space-organisations.module';
+import { ConfigModule } from '@nestjs/config';
+import { FilterModule } from './shared/filter/filter.module';
+import { ImageUploadModule } from './shared/upload/image-upload.module';
+import { TelescopeModule } from './telescopes/telescopes.module';
+import { AmateurOwnerModule } from './amateur-owner/amateur-owner.module';
+import { BlacklistModule } from './blacklist/blacklist.module';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    
     ThrottlerModule.forRoot([{
       ttl: 60000, 
       limit: 5,    
     }]),
+    
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: process.env.POSTGRES_HOST || 'db',
+      host: process.env.POSTGRES_HOST || 'localhost',
       port: parseInt(process.env.POSTGRES_PORT ?? '5432'),
       username: process.env.POSTGRES_USER || 'postgres',
       password: process.env.POSTGRES_PASSWORD || 'postgres',
@@ -28,8 +40,14 @@ import { PaginationModule } from './shared/pagination/pagination.module';
       autoLoadEntities: true,
     }),
     AuthModule,
+    BlacklistModule,
     UsersModule,
-    PaginationModule
+    SpaceOrganisationsModule,
+    PaginationModule,
+    FilterModule,
+    ImageUploadModule,
+    AmateurOwnerModule,
+    TelescopeModule,
   ],
   
   controllers: [AppController],
@@ -43,7 +61,7 @@ export class AppModule implements OnModuleInit {
   async onModuleInit() {
     
     const userRepository = this.dataSource.getRepository(User); 
-
+    
     await UserSeed.run(userRepository);
   }
 

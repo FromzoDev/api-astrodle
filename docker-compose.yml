@@ -15,6 +15,39 @@ services:
     networks:
       - default
 
+  minio:
+    image: minio/minio:latest
+    container_name: astrodle-minio
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: astrodle-dev-key
+      MINIO_ROOT_PASSWORD: astrodle-dev-secret-key
+    volumes:
+      - minio_data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  minio-init:
+    image: minio/mc:latest
+    container_name: astrodle-minio-init
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set local http://minio:9000 astrodle-dev-key astrodle-dev-secret-key;
+      mc mb --ignore-existing local/astrodle;
+      mc anonymous set download local/astrodle/users;
+      mc anonymous set download local/astrodle/space-organisations;
+      exit 0;
+      "
   app:
     build:
       context: .
@@ -48,6 +81,7 @@ services:
 
 volumes:
   pgdata:
+  minio_data:
 
 
 networks:

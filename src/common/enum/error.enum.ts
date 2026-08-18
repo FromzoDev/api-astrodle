@@ -1,5 +1,6 @@
 export enum ErrorMessage {
     GLOBAL_ERROR_MESSAGE = 'Une erreur est survenue.',
+    GLOBAL_NOT_FOUND_MESSAGE = 'Ressource introuvable.',
     TOO_MANY_REQUESTS = 'Trop de tentatives, réessayez dans 1 minute.',
     REFRESH_TOKEN_ERROR = 'Refresh token invalide ou expiré.',
     UNAUTHORIZED_MESSAGE = 'Vous n’êtes pas autorisé.',
@@ -9,6 +10,10 @@ export enum ErrorMessage {
     DELETE_ERROR_MESSAGE = 'Echec de la suppression.',
     USER_NOT_FOUND = "Utilisateur introuvable",
     USER_LOGIN_ERROR = "Email ou mot de passe incorrect.",
-    USER_CANNOT_MODIFY_OTHER = "Vous ne pouvez modifier que votre propre compte."
-
+    USER_CANNOT_MODIFY_OTHER = "Vous ne pouvez modifier que votre propre compte.",
+    SPACE_ORGANISATION_ALREADY_EXISTS = "L'organisation spatiale existe déjà.",
+    SPACE_ORGANISATION_NOT_FOUND = "Organisation spatiale introuvable",
+    SPACE_ORGANISATION_CANNOT_MODIFY_OTHER = "Vous ne pouvez modifier que votre propre organisation spatiale.",
+    AMATEUR_OWNER_NOT_FOUND = "Propriétaire amateur introuvable",
+    AMATEUR_OWNER_CONSENT_REQUIRES_NAME = "Le nom et prénom sont requis si le consentement à l'affichage est donné",
 }

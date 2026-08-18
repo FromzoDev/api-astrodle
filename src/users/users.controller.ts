@@ -1,41 +1,43 @@
 import {Controller, Get, Request, Param, Post, Body, Patch, ParseIntPipe, Delete, HttpStatus, Query} from '@nestjs/common';
 import { UsersService } from './users.service';
-import { PaginationService } from '../shared/pagination/pagination.service';
 import { User } from './user.entity';
 import { createUserDTO } from './DTO/create-user-dto';
 import { updateUserDTO } from './DTO/update-user-dto';
 import { SuccessMessage } from '../common/enum/success.enum';
-import { ApiResponse } from '../common/interfaces/response.interface';
+import { ApiResponse, PaginatedApiResponse } from '../common/interfaces/response.interface';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { Auth } from '../common/decorators/auth.decorator';
 import { Role } from '../common/enum/roles.enum';
-import { PaginationDto } from '../shared/pagination/pagination-dto';
-import { PaginationResult } from '../shared/pagination/pagination.interface';
+import { UseInterceptors, UploadedFile } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiConsumes, ApiBody } from '@nestjs/swagger';
+import { MulterFile } from '../types/multer-file.type';
+import { userQueryDto } from './DTO/user-query-dto';
+import { ErrorMessage } from '../common/enum/error.enum';
 
 @ApiBearerAuth('JWT-auth')
 @Controller('users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
-  
 
-  // @Auth(Role.Moderator)
-  // @Get()
-  // async getUsers(): Promise<ApiResponse<User[]>> {
-  // return await this.usersService.findAll().then(users => ({
-  //   code: HttpStatus.OK,
-  //   message: SuccessMessage.USER_FETCHED_ALL,
-  //   data: users,
-  //   }));
-  // }
 
   @Auth(Role.Moderator)
   @Get()
-  async getUsersPaginated(@Query() paginationDto: PaginationDto): Promise<ApiResponse<PaginationResult<User>>> {
-    return await this.usersService.findPaginated(paginationDto).then(users => ({
+  async getUsersPaginated( @Query() userQueryDto: userQueryDto ): Promise<PaginatedApiResponse<User>> {
+
+    const result = await this.usersService.findPaginated(userQueryDto);
+
+    return {
       code: HttpStatus.OK,
-      message: SuccessMessage.USER_FETCHED_ALL,
-      data: users,
-    }));
+      message: result.items.length > 0 ? SuccessMessage.USER_FETCHED_ALL : ErrorMessage.GLOBAL_NOT_FOUND_MESSAGE,
+      data: result.items,
+      pagination: {
+        total: result.total,
+        page: result.page,
+        limit: result.limit,
+        lastPage: result.lastPage,
+      },
+    };
   }
 
 
@@ -65,8 +67,24 @@ export class UsersController {
   @ApiBearerAuth('JWT-auth')
   @Auth(Role.Admin)
   @Post()
-  async createUser(@Body() createUserDTO: createUserDTO): Promise<ApiResponse<User>> {
-    const user = await this.usersService.createUser(createUserDTO);
+  @UseInterceptors(FileInterceptor('file'))
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        email: { type: 'string' },
+        username: { type: 'string' },
+        password: { type: 'string' },
+        file: { type: 'string', format: 'binary' },
+      },
+    },
+  })
+  async createUser(
+    @Body() createUserDTO: createUserDTO,
+    @UploadedFile() file: MulterFile,
+  ): Promise<ApiResponse<User>> {
+    const user = await this.usersService.createUser(createUserDTO, file);
 
     return {
       code: HttpStatus.CREATED,
@@ -78,8 +96,25 @@ export class UsersController {
   @ApiBearerAuth('JWT-auth')
   @Auth(Role.Admin)
   @Patch('/:id')
-  async updateUser(@Param('id', ParseIntPipe) id: number, @Body() updateUserDTO: updateUserDTO, @Request() req ): Promise<ApiResponse<User | null>> {
-    const updatedUser = await this.usersService.updateUser(updateUserDTO, id, req.user);
+  @UseInterceptors(FileInterceptor('file'))
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: {
+        username: { type: 'string' },
+        email: { type: 'string' },
+        file: { type: 'string', format: 'binary' },
+      },
+    },
+  })
+  async updateUser(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateUserDTO: updateUserDTO,
+    @Request() req,
+    @UploadedFile() file: MulterFile,
+  ): Promise<ApiResponse<User | null>> {
+    const updatedUser = await this.usersService.updateUser(updateUserDTO, id, req.user, file);
 
     return {
       code: HttpStatus.OK,

@@ -28,4 +28,10 @@ export enum SuccessMessage {
     PERSONALITY_CREATED = "Personnalité créée avec succès",
     PERSONALITY_UPDATED = "Personnalité mise à jour avec succès",
     PERSONALITY_DELETED = "Personnalité supprimée avec succès",
+    OBJECT_TYPES_FETCHED = "Types d'objets récupérés avec succès",
+    SPACE_SKY_OBJECT_FETCHED_ALL = "Objets célestes récupérés avec succès",
+    SPACE_SKY_OBJECT_FETCHED_BY_ID = "Objet céleste récupéré avec succès",
+    SPACE_SKY_OBJECT_CREATED = "Objet céleste créé avec succès",
+    SPACE_SKY_OBJECT_UPDATED = "Objet céleste mis à jour avec succès",
+    SPACE_SKY_OBJECT_DELETED = "Objet céleste supprimé avec succès",
 }

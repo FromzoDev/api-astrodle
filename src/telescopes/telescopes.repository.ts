@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, FindOneOptions } from 'typeorm';
+import { Repository, FindOneOptions, In } from 'typeorm';
 import { Telescope } from './telescopes.entity';
 import { PaginationService } from '../shared/pagination/pagination.service';
 import { PaginationResult } from '../shared/pagination/pagination.interface';
@@ -60,6 +60,10 @@ export class TelescopeRepository {
       where: { id },
       relations: ['spaceOrganisations', 'amateurOwner'],
     });
+  }
+
+  async findByIds(ids: number[]): Promise<Telescope[]> {
+    return this.telescopeRepository.findBy({ id: In(ids) });
   }
 
   async createTelescope(data: Partial<Telescope>): Promise<Telescope> {

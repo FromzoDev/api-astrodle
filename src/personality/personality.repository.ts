@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, FindOneOptions } from 'typeorm';
+import { Repository, FindOneOptions, In } from 'typeorm';
 import { Personality } from './personality.entity';
 import { PaginationService } from '../shared/pagination/pagination.service';
 import { PaginationResult } from '../shared/pagination/pagination.interface';
@@ -49,6 +49,10 @@ export class PersonalityRepository {
 
   async findOneById(id: number): Promise<Personality | null> {
     return this.personalityRepository.findOneBy({ id });
+  }
+
+  async findByIds(ids: number[]): Promise<Personality[]> {
+    return this.personalityRepository.findBy({ id: In(ids) });
   }
 
   async createPersonality(data: Partial<Personality>): Promise<Personality> {

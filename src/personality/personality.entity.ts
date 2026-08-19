@@ -1,6 +1,7 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToMany } from 'typeorm';
 import { Country } from '../common/enum/country.enum';
 import { Profession } from '../common/enum/profession.enum';
+import { SpaceSkyObject } from '../spaceSkyObject/space-sky-object.entity';
 
 @Entity()
 export class Personality {
@@ -30,6 +31,9 @@ export class Personality {
 
     @Column({ nullable: true })
     personalityImage?: string;
+
+    @ManyToMany(() => SpaceSkyObject, (spaceSkyObject) => spaceSkyObject.discoverers)
+    discoveredObjects?: SpaceSkyObject[];
 
     @CreateDateColumn()
     createdAt: Date;

@@ -17,6 +17,7 @@ import { ImageUploadModule } from './shared/upload/image-upload.module';
 import { TelescopeModule } from './telescopes/telescopes.module';
 import { AmateurOwnerModule } from './amateur-owner/amateur-owner.module';
 import { BlacklistModule } from './blacklist/blacklist.module';
+import { ObjectTypeModule } from './object-type/object-type.module';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { BlacklistModule } from './blacklist/blacklist.module';
     ImageUploadModule,
     AmateurOwnerModule,
     TelescopeModule,
+    ObjectTypeModule,
   ],
   
   controllers: [AppController],

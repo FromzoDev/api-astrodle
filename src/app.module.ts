@@ -17,13 +17,20 @@ import { ImageUploadModule } from './shared/upload/image-upload.module';
 import { TelescopeModule } from './telescopes/telescopes.module';
 import { AmateurOwnerModule } from './amateur-owner/amateur-owner.module';
 import { BlacklistModule } from './blacklist/blacklist.module';
-import { ObjectTypeModule } from './object-type/object-type.module';
+import { ObjectTypeModule } from './objectType/object-type.module';
+import { GameModule } from './game/game.module';
+import { GuessSkyObjectModule } from './guessSkyObject/guess-sky-object.module';
+import { DashboardModule } from './dashboard/dashboard.module';
+import { ScheduleModule } from '@nestjs/schedule';
+import { GameCleanupModule } from './game/game-cleanup/game-cleanup.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+
+    ScheduleModule.forRoot(),
     
     ThrottlerModule.forRoot([{
       ttl: 60000, 
@@ -50,6 +57,10 @@ import { ObjectTypeModule } from './object-type/object-type.module';
     AmateurOwnerModule,
     TelescopeModule,
     ObjectTypeModule,
+    GameModule,
+    GuessSkyObjectModule,
+    DashboardModule,
+    GameCleanupModule,
   ],
   
   controllers: [AppController],

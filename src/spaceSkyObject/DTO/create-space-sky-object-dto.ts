@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsEnum, IsDateString, IsNumber, IsOptional, IsArray, IsInt } from 'class-validator';
-import { Transform } from 'class-transformer';
+import { IsString, IsEnum, IsNumber, IsDateString, IsOptional, IsInt } from 'class-validator';
+import { Transform, Type } from 'class-transformer';
 import { ObjectType } from '../../common/enum/object-type.enum';
 
 export class createSpaceSkyObjectDTO {
@@ -34,25 +34,17 @@ export class createSpaceSkyObjectDTO {
   @IsString()
   description: string;
 
-  @ApiProperty({ required: false, type: [Number], description: 'IDs des découvreurs (Personality)' })
+  @ApiProperty({ required: false, description: 'ID du découvreur' })
   @IsOptional()
-  @Transform(({ value }) => {
-    if (value === undefined || value === '') return undefined;
-    const arr = Array.isArray(value) ? value : [value];
-    return arr.map((v) => parseInt(v, 10));
-  })
-  @IsArray()
-  @IsInt({ each: true })
-  discovererIds?: number[];
+  @Transform(({ value }) => (value === '' ? undefined : value))
+  @Type(() => Number)
+  @IsInt()
+  discovererId?: number;
 
-  @ApiProperty({ required: false, type: [Number], description: 'IDs des télescopes ayant observé cet objet' })
+  @ApiProperty({ required: false, description: 'ID du télescope observateur' })
   @IsOptional()
-  @Transform(({ value }) => {
-    if (value === undefined || value === '') return undefined;
-    const arr = Array.isArray(value) ? value : [value];
-    return arr.map((v) => parseInt(v, 10));
-  })
-  @IsArray()
-  @IsInt({ each: true })
-  telescopeIds?: number[];
+  @Transform(({ value }) => (value === '' ? undefined : value))
+  @Type(() => Number)
+  @IsInt()
+  telescopeId?: number;
 }

@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, ManyToOne, JoinTable, JoinColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, ManyToOne, JoinTable, JoinColumn, OneToMany } from 'typeorm';
 import { TelescopeLocation, TelescopeSpectrum } from '../common/enum/telecope.enum';
 import { SpaceOrganisation } from '../spaceOrganisations/space-organisations.entity';
 import { AmateurOwner } from '../amateur-owner/amateur-owner.entity';
@@ -36,7 +36,7 @@ export class Telescope {
     @JoinColumn({ name: 'amateurOwnerId' })
     amateurOwner?: AmateurOwner;
 
-    @ManyToMany(() => SpaceSkyObject, (spaceSkyObject) => spaceSkyObject.observedByTelescopes)
+    @OneToMany(() => SpaceSkyObject, (spaceSkyObject) => spaceSkyObject.telescope)
     observations?: SpaceSkyObject[];
 
     @Column()

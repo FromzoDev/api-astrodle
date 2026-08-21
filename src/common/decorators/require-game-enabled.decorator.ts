@@ -1,4 +1,3 @@
-// common/decorators/require-game-enabled.decorator.ts
 import { SetMetadata } from '@nestjs/common';
 import { GameMode } from '../enum/game-mode.enum';
 import { GameType } from '../enum/game-type.enum';

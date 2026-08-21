@@ -1,4 +1,4 @@
-import { Injectable, HttpException, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { Injectable, HttpException, InternalServerErrorException, NotFoundException, BadRequestException } from '@nestjs/common';
 import { SpaceSkyObject } from './space-sky-object.entity';
 import { createSpaceSkyObjectDTO } from './DTO/create-space-sky-object-dto';
 import { updateSpaceSkyObjectDTO } from './DTO/update-space-sky-object-dto';
@@ -44,13 +44,21 @@ export class SpaceSkyObjectService {
 
   async createSpaceSkyObject(dto: createSpaceSkyObjectDTO, file?: MulterFile): Promise<SpaceSkyObject> {
     try {
-      const discoverers = dto.discovererIds?.length
-        ? await this.personalityRepository.findByIds(dto.discovererIds)
-        : [];
+      let discoverer = undefined;
+      if (dto.discovererId) {
+        discoverer = await this.personalityRepository.findOneById(dto.discovererId);
+        if (!discoverer) {
+          throw new BadRequestException('Découvreur introuvable');
+        }
+      }
 
-      const observedByTelescopes = dto.telescopeIds?.length
-        ? await this.telescopeRepository.findByIds(dto.telescopeIds)
-        : [];
+      let telescope = undefined;
+      if (dto.telescopeId) {
+        telescope = await this.telescopeRepository.findOneById(dto.telescopeId);
+        if (!telescope) {
+          throw new BadRequestException('Télescope introuvable');
+        }
+      }
 
       const saved = await this.spaceSkyObjectRepository.createSpaceSkyObject({
         name: dto.name,
@@ -60,8 +68,8 @@ export class SpaceSkyObjectService {
         magnitude: dto.magnitude,
         distanceLightYears: dto.distanceLightYears,
         description: dto.description,
-        discoverers,
-        observedByTelescopes,
+        discoverer,
+        telescope,
       });
 
       if (file) {
@@ -85,18 +93,20 @@ export class SpaceSkyObjectService {
         throw new NotFoundException(ErrorMessage.GLOBAL_NOT_FOUND_MESSAGE);
       }
 
-      let discoverers = spaceSkyObject.discoverers;
-      if (dto.discovererIds !== undefined) {
-        discoverers = dto.discovererIds.length
-          ? await this.personalityRepository.findByIds(dto.discovererIds)
-          : [];
+      let discoverer = spaceSkyObject.discoverer;
+      if (dto.discovererId !== undefined) {
+        discoverer = await this.personalityRepository.findOneById(dto.discovererId);
+        if (!discoverer) {
+          throw new BadRequestException('Découvreur introuvable');
+        }
       }
 
-      let observedByTelescopes = spaceSkyObject.observedByTelescopes;
-      if (dto.telescopeIds !== undefined) {
-        observedByTelescopes = dto.telescopeIds.length
-          ? await this.telescopeRepository.findByIds(dto.telescopeIds)
-          : [];
+      let telescope = spaceSkyObject.telescope;
+      if (dto.telescopeId !== undefined) {
+        telescope = await this.telescopeRepository.findOneById(dto.telescopeId);
+        if (!telescope) {
+          throw new BadRequestException('Télescope introuvable');
+        }
       }
 
       let objectImage: string | undefined;
@@ -109,8 +119,8 @@ export class SpaceSkyObjectService {
       const updated = await this.spaceSkyObjectRepository.updateSpaceSkyObject(id, {
         ...dto,
         ...(dto.discoveryDate && { discoveryDate: new Date(dto.discoveryDate) }),
-        discoverers,
-        observedByTelescopes,
+        discoverer,
+        telescope,
         ...(objectImage && { objectImage }),
       });
 

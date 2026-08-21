@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, JoinTable, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, JoinColumn, ManyToOne } from 'typeorm';
 import { ObjectType } from '../common/enum/object-type.enum';
 import { Personality } from '../personality/personality.entity';
 import { Telescope } from '../telescopes/telescopes.entity';
@@ -32,21 +32,13 @@ export class SpaceSkyObject {
     @Column()
     description: string;
 
-    @ManyToMany(() => Personality, (personality) => personality.discoveredObjects)
-    @JoinTable({
-      name: 'space_sky_object_personality',
-      joinColumn: { name: 'spaceSkyObjectId', referencedColumnName: 'id' },
-      inverseJoinColumn: { name: 'personalityId', referencedColumnName: 'id' },
-    })
-    discoverers?: Personality[];
+    @ManyToOne(() => Personality, (personality) => personality.discoveredObjects)
+    @JoinColumn({ name: 'discovererId' })
+    discoverer: Personality;
 
-    @ManyToMany(() => Telescope, (telescope) => telescope.observations)
-    @JoinTable({
-      name: 'space_sky_object_telescope',
-      joinColumn: { name: 'spaceSkyObjectId', referencedColumnName: 'id' },
-      inverseJoinColumn: { name: 'telescopeId', referencedColumnName: 'id' },
-    })
-    observedByTelescopes?: Telescope[];
+    @ManyToOne(() => Telescope, (telescope) => telescope.observations)
+    @JoinColumn({ name: 'telescopeId' })
+    telescope: Telescope;
 
     @CreateDateColumn()
     createdAt: Date;

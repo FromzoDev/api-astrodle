@@ -16,4 +16,12 @@ export enum ErrorMessage {
     SPACE_ORGANISATION_CANNOT_MODIFY_OTHER = "Vous ne pouvez modifier que votre propre organisation spatiale.",
     AMATEUR_OWNER_NOT_FOUND = "Propriétaire amateur introuvable",
     AMATEUR_OWNER_CONSENT_REQUIRES_NAME = "Le nom et prénom sont requis si le consentement à l'affichage est donné",
+    AMATEUR_OWNER_CONSENT_REQUIRES_CONSENT = "Le consentement à l'affichage est requis si le nom et prénom sont fournis",
+    AMATEUR_OWNER_CANNOT_MODIFY_OTHER = "Vous ne pouvez modifier que votre propre propriétaire amateur.",
+    TELESCOPE_NOT_FOUND = "Télescope introuvable",
+    GAME_NOT_AVAILABLE = "Le jeu n'est pas disponible dans ce mode.",
+    GAME_SESSION_NOT_FOUND = "Session de jeu introuvable",
+    GAME_SESSION_ALREADY_FINISHED = "La session de jeu est déjà terminée.",
+    GAME_CONFIG_NOT_FOUND = "Configuration de jeu introuvable.",
+    GAME_CONFIG_ALREADY_EXISTS = "La configuration de jeu existe déjà pour ce type et ce mode.",
 }

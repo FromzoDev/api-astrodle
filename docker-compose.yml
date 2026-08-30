@@ -46,6 +46,8 @@ services:
       mc mb --ignore-existing local/astrodle;
       mc anonymous set download local/astrodle/users;
       mc anonymous set download local/astrodle/space-organisations;
+      mc anonymous set download local/astrodle/personalities;
+      mc anonymous set download local/astrodle/space-sky-objects;
       exit 0;
       "
   app:

@@ -44,7 +44,7 @@ export class TelescopeRepository {
 
     queryBuilder = this.filterService.applyOrderFilter(
       queryBuilder,
-      options.orderBy,
+      options.orderBy ? `telescope.${options.orderBy}` : undefined,
       options.orderDirection,
     );
 

@@ -13,8 +13,8 @@ export class SpaceOrganisation {
     @Column()
     description:  string;
 
-    @Column()
-    country: Country;
+    @Column({ type: 'simple-array' })
+    countries: Country[];
 
     @Column({nullable: true})
     agencyLogo: string;

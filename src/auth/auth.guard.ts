@@ -6,13 +6,15 @@ import { Request } from 'express';
 import { ErrorMessage } from '../common/enum/error.enum';
 import { IS_PUBLIC_KEY } from '../common/decorators/public.decorator';
 import { BlacklistRepository } from '../blacklist/blacklist.repository';
-  
+import { UsersRepository } from '../users/users.repository';
+
   @Injectable()
   export class AuthGuard implements CanActivate {
    constructor(
     private jwtService: JwtService,
     private reflector: Reflector,
     private blacklistRepository: BlacklistRepository,
+    private usersRepository: UsersRepository,
   ) {}
   
     async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -40,6 +42,12 @@ import { BlacklistRepository } from '../blacklist/blacklist.repository';
 
           if (await this.blacklistRepository.isBlacklisted(token)) {
             throw new UnauthorizedException(ErrorMessage.UNAUTHORIZED_MESSAGE);
+          }
+
+          const user = await this.usersRepository.findOneById(payload.sub);
+
+          if (!user || !user.isActive) {
+            throw new UnauthorizedException(ErrorMessage.USER_ACCOUNT_DISABLED);
           }
 
           request['user'] = payload;

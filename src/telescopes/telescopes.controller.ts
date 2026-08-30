@@ -68,7 +68,7 @@ export class TelescopeController {
     @Body() dto: createTelescopeDTO,
     @UploadedFile() file?: MulterFile,
   ): Promise<ApiResponse<Telescope>> {
-    return await this.telescopeService.createTelescope(dto).then((telescope) => ({
+    return await this.telescopeService.createTelescope(dto, file).then((telescope) => ({
       code: HttpStatus.CREATED,
       message: SuccessMessage.TELESCOPE_CREATED,
       data: telescope,
@@ -98,7 +98,7 @@ export class TelescopeController {
     @Body() dto: updateTelescopeDTO,
     @UploadedFile() file?: MulterFile,
   ): Promise<ApiResponse<Telescope>> {
-    return await this.telescopeService.updateTelescope(id, dto).then((telescope) => ({
+    return await this.telescopeService.updateTelescope(id, dto, file).then((telescope) => ({
       code: HttpStatus.OK,
       message: SuccessMessage.TELESCOPE_UPDATED,
       data: telescope,

@@ -8,6 +8,8 @@ import { SpaceOrganisationRepository } from '../spaceOrganisations/space-organis
 import { AmateurOwnerRepository } from '../amateur-owner/amateur-owner.repository';
 import { PaginationResult } from '../shared/pagination/pagination.interface';
 import { ErrorMessage } from '../common/enum/error.enum';
+import { ImageUploadService } from '../shared/upload/image-upload.service';
+import { MulterFile } from '../types/multer-file.type';
 
 @Injectable()
 export class TelescopeService {
@@ -15,6 +17,7 @@ export class TelescopeService {
     private readonly telescopeRepository: TelescopeRepository,
     private readonly spaceOrganisationRepository: SpaceOrganisationRepository,
     private readonly amateurOwnerRepository: AmateurOwnerRepository,
+    private readonly imageUploadService: ImageUploadService,
   ) {}
 
   async findPaginated(options: TelescopeQueryDto): Promise<PaginationResult<Telescope>> {
@@ -47,7 +50,7 @@ export class TelescopeService {
     }
   }
 
-  async createTelescope(dto: createTelescopeDTO): Promise<Telescope> {
+  async createTelescope(dto: createTelescopeDTO, file?: MulterFile): Promise<Telescope> {
     try {
       this.validateAmateurConsistency(dto.isAmateur, dto.spaceOrganisationIds, dto.amateurOwnerId);
 
@@ -72,6 +75,14 @@ export class TelescopeService {
         amateurOwner,
       });
 
+      if (file) {
+        const telescopeImage = await this.imageUploadService.uploadImage(file, 'telescopes', telescope.id, {
+          maxSizeMb: 100,
+        });
+        const updated = await this.telescopeRepository.updateTelescope(telescope.id, { telescopeImage });
+        return this.maskAmateurOwnerIfNeeded(updated);
+      }
+
       return this.maskAmateurOwnerIfNeeded(telescope);
     } catch (error) {
       if (error instanceof HttpException) {
@@ -81,7 +92,7 @@ export class TelescopeService {
     }
   }
 
-  async updateTelescope(id: number, dto: updateTelescopeDTO): Promise<Telescope> {
+  async updateTelescope(id: number, dto: updateTelescopeDTO, file?: MulterFile): Promise<Telescope> {
     try {
       const telescope = await this.telescopeRepository.findOneById(id);
 
@@ -107,10 +118,18 @@ export class TelescopeService {
         }
       }
 
+      let telescopeImage: string | undefined;
+      if (file) {
+        telescopeImage = await this.imageUploadService.uploadImage(file, 'telescopes', id, {
+          maxSizeMb: 100,
+        });
+      }
+
       const updated = await this.telescopeRepository.updateTelescope(id, {
         ...dto,
         spaceOrganisations,
         amateurOwner,
+        ...(telescopeImage ? { telescopeImage } : {}),
       });
 
       if (!updated) {

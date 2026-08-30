@@ -26,7 +26,7 @@ export class AmateurOwnerRepository {
 
     queryBuilder = this.filterService.applyOrderFilter(
       queryBuilder,
-      options.orderBy,
+      options.orderBy ? `amateurOwner.${options.orderBy}` : undefined,
       options.orderDirection,
     );
 

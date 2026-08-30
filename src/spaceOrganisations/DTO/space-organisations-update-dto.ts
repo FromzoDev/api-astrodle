@@ -1,4 +1,4 @@
-import { IsEnum, IsOptional, IsString } from 'class-validator';
+import { ArrayNotEmpty, IsArray, IsEnum, IsOptional, IsString } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 import { Country } from '../../common/enum/country.enum';
@@ -31,14 +31,19 @@ export class updateSpaceOrganisationDTO {
 
     @ApiProperty({
         required: false,
-        description: 'The country of the space organisation',
-        example: Country.Austria,
+        description: 'The countries of the space organisation, as a JSON-stringified array',
+        example: JSON.stringify([Country.France, Country.Germany]),
         type: String,
-        title: 'Country',
+        title: 'Countries',
     })
     @IsOptional()
-    @Transform(({ value }) => (value === '' ? undefined : value))
-    @IsEnum(Country)
-    country?: Country;
+    @Transform(({ value }) => {
+        if (value === '') return undefined;
+        return typeof value === 'string' ? JSON.parse(value) : value;
+    })
+    @IsArray()
+    @ArrayNotEmpty()
+    @IsEnum(Country, { each: true })
+    countries?: Country[];
 
 }

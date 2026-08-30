@@ -36,7 +36,7 @@ export class UsersRepository {
 
     queryBuilder = this.filterService.applyArrayContainsFilter(queryBuilder, options.role, 'user.roles');
 
-    queryBuilder = this.filterService.applyOrderFilter(queryBuilder, options.orderBy, options.orderDirection);
+    queryBuilder = this.filterService.applyOrderFilter(queryBuilder,  options.orderBy ? `user.${options.orderBy}` : undefined, options.orderDirection);
 
     return this.paginationService.paginate(queryBuilder, options);
   }

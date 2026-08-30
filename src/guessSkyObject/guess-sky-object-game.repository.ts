@@ -29,7 +29,11 @@ export class GuessSkyObjectGameRepository {
 
     queryBuilder = this.filterService.applyExactFilter(queryBuilder, options.isEnabled, 'game.isEnabled');
 
-    queryBuilder = this.filterService.applyOrderFilter(queryBuilder, options.orderBy, options.orderDirection);
+    queryBuilder = this.filterService.applyOrderFilter(
+      queryBuilder,
+      options.orderBy ? `game.${options.orderBy}` : undefined,
+      options.orderDirection,
+    );
 
     return this.paginationService.paginate(queryBuilder, options);
   }

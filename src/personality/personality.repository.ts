@@ -36,7 +36,7 @@ export class PersonalityRepository {
 
     queryBuilder = this.filterService.applyOrderFilter(
       queryBuilder,
-      options.orderBy,
+      options.orderBy ? `personality.${options.orderBy}` : undefined,
       options.orderDirection,
     );
 

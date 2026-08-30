@@ -74,7 +74,7 @@ export class SpaceSkyObjectService {
 
       if (file) {
         const objectImage = await this.imageUploadService.uploadImage(file, 'space-sky-objects', saved.id, {
-          maxSizeMb: 10,
+          maxSizeMb: 100,
         });
         return this.spaceSkyObjectRepository.updateSpaceSkyObject(saved.id, { objectImage });
       }
@@ -112,7 +112,7 @@ export class SpaceSkyObjectService {
       let objectImage: string | undefined;
       if (file) {
         objectImage = await this.imageUploadService.uploadImage(file, 'space-sky-objects', id, {
-          maxSizeMb: 10,
+          maxSizeMb: 100,
         });
       }
 

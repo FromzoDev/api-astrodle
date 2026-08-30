@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToMany, ManyToOne, JoinTable, JoinColumn, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToMany, ManyToOne, JoinTable, JoinColumn, OneToMany } from 'typeorm';
 import { TelescopeLocation, TelescopeSpectrum } from '../common/enum/telecope.enum';
 import { SpaceOrganisation } from '../spaceOrganisations/space-organisations.entity';
 import { AmateurOwner } from '../amateur-owner/amateur-owner.entity';
@@ -12,8 +12,8 @@ export class Telescope {
     @Column()
     name: string;
 
-    @Column()
-    telescopeImage: string;
+    @Column({ nullable: true })
+    telescopeImage?: string;
     
     @Column()
     telescopeLocation: TelescopeLocation;
@@ -39,9 +39,9 @@ export class Telescope {
     @OneToMany(() => SpaceSkyObject, (spaceSkyObject) => spaceSkyObject.telescope)
     observations?: SpaceSkyObject[];
 
-    @Column()
+    @CreateDateColumn()
     createdAt: Date;
 
-    @Column()
+    @UpdateDateColumn()
     updatedAt: Date;
 }

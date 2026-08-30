@@ -46,7 +46,7 @@ export class SpaceSkyObjectRepository {
 
     queryBuilder = this.filterService.applyOrderFilter(
       queryBuilder,
-      options.orderBy,
+      options.orderBy ? `spaceSkyObject.${options.orderBy}` : undefined,
       options.orderDirection,
     );
 

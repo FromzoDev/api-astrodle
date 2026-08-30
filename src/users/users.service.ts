@@ -1,4 +1,4 @@
-import { ConflictException, ForbiddenException, HttpException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { ConflictException, ForbiddenException, HttpException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import { UsersRepository } from './users.repository';
 import { User } from './user.entity';
 import { createUserDTO } from './DTO/create-user-dto';
@@ -14,6 +14,8 @@ import { MulterFile } from '../types/multer-file.type';
 
 @Injectable()
 export class UsersService {
+  private readonly logger = new Logger(UsersService.name);
+
   constructor(
     private readonly usersRepository: UsersRepository,
     private readonly imageUploadService: ImageUploadService
@@ -98,7 +100,7 @@ export class UsersService {
 
       if (file && savedUser) {
         const avatarUrl = await this.imageUploadService.uploadImage(file, 'users', savedUser.id, {
-          maxSizeMb: 5,
+          maxSizeMb: 100,
         });
 
         return await this.usersRepository.updateUser(savedUser.id, { profilePicture: avatarUrl });
@@ -119,6 +121,10 @@ export class UsersService {
   
   async updateUser( updateUserDTO: updateUserDTO, id: number, currentUser: User, file?: MulterFile, ): Promise<User> {
     try {
+      this.logger.debug(
+        `updateUser(${id}) isActive=${updateUserDTO.isActive} (type: ${typeof updateUserDTO.isActive})`,
+      );
+
       if (currentUser.id !== id && !currentUser.roles.includes(Role.Admin)) {
         throw new ForbiddenException(ErrorMessage.USER_CANNOT_MODIFY_OTHER);
       }
@@ -129,19 +135,21 @@ export class UsersService {
         throw new NotFoundException(ErrorMessage.USER_NOT_FOUND);
       }
 
-      const existingUsername = await this.usersRepository.findOne({
-        where: [{ username: updateUserDTO.username }],
-      });
+      if (updateUserDTO.username) {
+        const existingUsername = await this.usersRepository.findOne({
+          where: [{ username: updateUserDTO.username }],
+        });
 
-      if (existingUsername && existingUsername.id !== id) {
-        throw new ConflictException(ErrorMessage.USERNAME_ALREADY_EXISTS);
+        if (existingUsername && existingUsername.id !== id) {
+          throw new ConflictException(ErrorMessage.USERNAME_ALREADY_EXISTS);
+        }
       }
 
       let avatarUrl: string | undefined;
 
       if (file) {
         avatarUrl = await this.imageUploadService.uploadImage(file, 'users', id, {
-          maxSizeMb: 5,
+          maxSizeMb: 100,
         });
       }
 

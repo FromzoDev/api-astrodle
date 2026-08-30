@@ -54,7 +54,7 @@ export class PersonalityService {
 
       if (file) {
         const personalityImage = await this.imageUploadService.uploadImage(file, 'personalities', saved.id, {
-          maxSizeMb: 5,
+          maxSizeMb: 100,
         });
         return this.personalityRepository.updatePersonality(saved.id, { personalityImage });
       }
@@ -79,7 +79,7 @@ export class PersonalityService {
       let personalityImage: string | undefined;
       if (file) {
         personalityImage = await this.imageUploadService.uploadImage(file, 'personalities', id, {
-          maxSizeMb: 5,
+          maxSizeMb: 100,
         });
       }
 

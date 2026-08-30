@@ -35,6 +35,10 @@ export class AuthService {
       throw new UnauthorizedException(ErrorMessage.USER_LOGIN_ERROR);
     }
 
+    if (!user.isActive) {
+      throw new UnauthorizedException(ErrorMessage.USER_ACCOUNT_DISABLED);
+    }
+
     return await this.generateTokens(user.id, user.roles);
   }
 
@@ -56,6 +60,12 @@ export class AuthService {
       });
 
       if (!payload.refresh) {
+        throw new UnauthorizedException(ErrorMessage.REFRESH_TOKEN_ERROR);
+      }
+
+      const user = await this.userRepository.findOneById(payload.sub);
+
+      if (!user || !user.isActive) {
         throw new UnauthorizedException(ErrorMessage.REFRESH_TOKEN_ERROR);
       }
 

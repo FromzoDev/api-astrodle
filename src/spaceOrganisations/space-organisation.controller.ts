@@ -58,7 +58,7 @@ export class SpaceOrganisationController {
         properties: {
         name: { type: 'string' },
         description: { type: 'string' },
-        country: { type: 'string' },
+        countries: { type: 'string', description: 'JSON-stringified array of countries, e.g. ["France","Germany"]' },
         file: { type: 'string', format: 'binary' },
         },
     },
@@ -83,7 +83,7 @@ export class SpaceOrganisationController {
         properties: {
         name: { type: 'string' },
         description: { type: 'string' },
-        country: { type: 'string' },
+        countries: { type: 'string', description: 'JSON-stringified array of countries, e.g. ["France","Germany"]' },
         file: { type: 'string', format: 'binary' },
         },
     },

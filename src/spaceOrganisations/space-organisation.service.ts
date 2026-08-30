@@ -71,7 +71,7 @@ export class SpaceOrganisationService   {
 
         if (file && saved) {
             const logoUrl = await this.ImageUploadService.uploadImage(file, 'space-organisations', saved.id, {
-                maxSizeMb: 10,
+                maxSizeMb: 100,
             });
 
             return this.spaceOrganisationRepository.updateSpaceOrganisation(saved.id, { agencyLogo: logoUrl });
@@ -96,7 +96,7 @@ export class SpaceOrganisationService   {
 
         if (file) {
         logoUrl = await this.ImageUploadService.uploadImage(file, 'space-organisations', id, {
-            maxSizeMb: 10,
+            maxSizeMb: 100,
         });
         }
 

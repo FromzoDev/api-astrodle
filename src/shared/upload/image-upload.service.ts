@@ -31,7 +31,7 @@ export class ImageUploadService {
     options?: { maxSizeMb?: number; allowedMimeTypes?: string[] },
   ): Promise<string> {
 
-    const maxSizeMb = options?.maxSizeMb ?? 5;
+    const maxSizeMb = options?.maxSizeMb ?? 100;
     const allowedMimeTypes = options?.allowedMimeTypes ?? ['image/jpeg', 'image/png', 'image/webp'];
 
     if (file.size > maxSizeMb * 1024 * 1024) {

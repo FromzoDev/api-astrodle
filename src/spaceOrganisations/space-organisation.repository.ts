@@ -21,17 +21,15 @@ export class SpaceOrganisationRepository { 
     async findPaginated(options: SpaceOrganisationQueryDto): Promise<PaginationResult<SpaceOrganisation>> {
         let queryBuilder = this.spaceOrganisationRepository.createQueryBuilder('spaceOrganisation');
 
-        queryBuilder = this.filterService.applySearch(queryBuilder, options.search, ['spaceOrganisation.name', 'spaceOrganisation.country']);
+        queryBuilder = this.filterService.applySearch(queryBuilder, options.search, ['spaceOrganisation.name', 'spaceOrganisation.countries']);
 
-          const exactFilters: Array<{ field: string; value: unknown }> = [
-            { field: 'spaceOrganisation.country', value: options.country },
-        ];
+        queryBuilder = this.filterService.applyArrayContainsFilter(queryBuilder, options.country, 'spaceOrganisation.countries');
 
-        for (const { field, value } of exactFilters) {
-            queryBuilder = this.filterService.applyExactFilter(queryBuilder, value, field);
-        }
-
-        queryBuilder = this.filterService.applyOrderFilter(queryBuilder, options.orderBy, options.orderDirection);
+        queryBuilder = this.filterService.applyOrderFilter(
+            queryBuilder,
+            options.orderBy ? `spaceOrganisation.${options.orderBy}` : undefined,
+            options.orderDirection,
+        );
 
         return this.PaginationService.paginate(queryBuilder, options);
     }

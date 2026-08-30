@@ -44,11 +44,13 @@ export class UsersController {
   @Auth()
   @Get('profile')
   @ApiBearerAuth('JWT-auth')
-  getProfile(@Request() req): ApiResponse<User> {
+  async getProfile(@Request() req): Promise<ApiResponse<User | null>> {
+    const user = await this.usersService.findOneById(req.user.sub);
+
     return {
       code: HttpStatus.OK,
       message: SuccessMessage.USER_PROFIL_FETCHED,
-      data: req.user,
+      data: user,
     };
   }
 

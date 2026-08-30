@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, FindOneOptions } from 'typeorm';
+import { Repository, FindOneOptions, In } from 'typeorm';
 import { AmateurOwner } from './amateur-owner.entity';
 import { PaginationService } from '../shared/pagination/pagination.service';
 import { PaginationResult } from '../shared/pagination/pagination.interface';
@@ -30,7 +30,22 @@ export class AmateurOwnerRepository {
       options.orderDirection,
     );
 
-    return this.paginationService.paginate(queryBuilder, options);
+    const result = await this.paginationService.paginate(queryBuilder, options);
+
+    if (result.items.length === 0) {
+      return result;
+    }
+
+    const withTelescopes = await this.amateurOwnerRepository.find({
+      where: { id: In(result.items.map((item) => item.id)) },
+      relations: ['telescopes'],
+    });
+    const telescopesById = new Map(withTelescopes.map((amateurOwner) => [amateurOwner.id, amateurOwner.telescopes]));
+
+    return {
+      ...result,
+      items: result.items.map((item) => ({ ...item, telescopes: telescopesById.get(item.id) ?? [] })),
+    };
   }
 
   async findOne(options: FindOneOptions<AmateurOwner>): Promise<AmateurOwner | null> {
@@ -38,7 +53,7 @@ export class AmateurOwnerRepository {
   }
 
   async findOneById(id: number): Promise<AmateurOwner | null> {
-    return this.amateurOwnerRepository.findOneBy({ id });
+    return this.amateurOwnerRepository.findOne({ where: { id }, relations: ['telescopes'] });
   }
 
   async createAmateurOwner(data: Partial<AmateurOwner>): Promise<AmateurOwner> {

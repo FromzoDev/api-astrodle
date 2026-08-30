@@ -31,7 +31,22 @@ export class SpaceOrganisationRepository { 
             options.orderDirection,
         );
 
-        return this.PaginationService.paginate(queryBuilder, options);
+        const result = await this.PaginationService.paginate(queryBuilder, options);
+
+        if (result.items.length === 0) {
+            return result;
+        }
+
+        const withTelescopes = await this.spaceOrganisationRepository.find({
+            where: { id: In(result.items.map((item) => item.id)) },
+            relations: ['telescopes'],
+        });
+        const telescopesById = new Map(withTelescopes.map((spaceOrganisation) => [spaceOrganisation.id, spaceOrganisation.telescopes]));
+
+        return {
+            ...result,
+            items: result.items.map((item) => ({ ...item, telescopes: telescopesById.get(item.id) ?? [] })),
+        };
     }
 
     async findOne(options: FindOneOptions<SpaceOrganisation>) : Promise<SpaceOrganisation | null >{
@@ -39,7 +54,7 @@ export class SpaceOrganisationRepository { 
     }
 
     async findOneById(id: number): Promise<SpaceOrganisation | null>{
-        return this.spaceOrganisationRepository.findOneBy({id});
+        return this.spaceOrganisationRepository.findOne({ where: { id }, relations: ['telescopes'] });
     }
 
     async findByIds(ids: number[]): Promise<SpaceOrganisation[]> {

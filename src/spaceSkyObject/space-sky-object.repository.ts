@@ -19,8 +19,8 @@ export class SpaceSkyObjectRepository {
   async findPaginated(options: SpaceSkyObjectQueryDto): Promise<PaginationResult<SpaceSkyObject>> {
     let queryBuilder = this.spaceSkyObjectRepository
       .createQueryBuilder('spaceSkyObject')
-      .leftJoinAndSelect('spaceSkyObject.discoverers', 'discoverer')
-      .leftJoinAndSelect('spaceSkyObject.observedByTelescopes', 'telescope');
+      .leftJoinAndSelect('spaceSkyObject.discoverer', 'discoverer')
+      .leftJoinAndSelect('spaceSkyObject.telescope', 'telescope');
 
     queryBuilder = this.filterService.applySearch(queryBuilder, options.search, [
       'spaceSkyObject.name',
@@ -60,7 +60,7 @@ export class SpaceSkyObjectRepository {
   async findOneById(id: number): Promise<SpaceSkyObject | null> {
     return this.spaceSkyObjectRepository.findOne({
       where: { id },
-      relations: ['discoverers', 'observedByTelescopes'],
+      relations: ['discoverer', 'telescope'],
     });
   }
 

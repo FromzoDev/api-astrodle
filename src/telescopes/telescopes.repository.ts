@@ -16,24 +16,38 @@ export class TelescopeRepository {
     private readonly filterService: FilterService,
   ) {}
 
-  async findPaginated(options: TelescopeQueryDto): Promise<PaginationResult<Telescope>> {
+  async findPaginated(
+    options: TelescopeQueryDto,
+  ): Promise<PaginationResult<Telescope>> {
     let queryBuilder = this.telescopeRepository
       .createQueryBuilder('telescope')
       .leftJoinAndSelect('telescope.spaceOrganisations', 'spaceOrganisation')
-      .leftJoinAndSelect('telescope.amateurOwner', 'amateurOwner')
+      .leftJoinAndSelect('telescope.amateurOwner', 'amateurOwner');
 
-    queryBuilder = this.filterService.applySearch(queryBuilder, options.search, [
-      'telescope.name',
-    ]);
+    queryBuilder = this.filterService.applySearch(
+      queryBuilder,
+      options.search,
+      ['telescope.name'],
+    );
 
     const exactFilters: Array<{ field: string; value: unknown }> = [
-      { field: 'telescope.telescopeLocation', value: options.telescopeLocation },
-      { field: 'telescope.telescopeSpectrum', value: options.telescopeSpectrum },
+      {
+        field: 'telescope.telescopeLocation',
+        value: options.telescopeLocation,
+      },
+      {
+        field: 'telescope.telescopeSpectrum',
+        value: options.telescopeSpectrum,
+      },
       { field: 'telescope.isAmateur', value: options.isAmateur },
     ];
 
     for (const { field, value } of exactFilters) {
-      queryBuilder = this.filterService.applyExactFilter(queryBuilder, value, field);
+      queryBuilder = this.filterService.applyExactFilter(
+        queryBuilder,
+        value,
+        field,
+      );
     }
 
     if (options.spaceOrganisationId !== undefined) {
@@ -71,7 +85,10 @@ export class TelescopeRepository {
     return this.telescopeRepository.save(telescope);
   }
 
-  async updateTelescope(id: number, updateData: Partial<Telescope>): Promise<Telescope | null> {
+  async updateTelescope(
+    id: number,
+    updateData: Partial<Telescope>,
+  ): Promise<Telescope | null> {
     await this.telescopeRepository.save({ id, ...updateData });
     return this.findOneById(id);
   }

@@ -8,7 +8,6 @@ export class FilterService {
     search: string | undefined,
     fields: string[],
   ): SelectQueryBuilder<DataType> {
-    
     if (!search || !search.trim()) {
       return querybuilder;
     }
@@ -18,9 +17,13 @@ export class FilterService {
         fields.forEach((field, index) => {
           const condition = `${field} ILIKE :search`;
           if (index === 0) {
-            searchQueryBuilder.where(condition, { search: `%${search.trim()}%` });
+            searchQueryBuilder.where(condition, {
+              search: `%${search.trim()}%`,
+            });
           } else {
-            searchQueryBuilder.orWhere(condition, { search: `%${search.trim()}%` });
+            searchQueryBuilder.orWhere(condition, {
+              search: `%${search.trim()}%`,
+            });
           }
         });
       }),
@@ -42,9 +45,9 @@ export class FilterService {
   }
 
   applyOrderFilter<DataType extends object>(
-  querybuilder: SelectQueryBuilder<DataType>,
-  orderBy: string | undefined,
-  orderDirection: 'ASC' | 'DESC' | undefined,
+    querybuilder: SelectQueryBuilder<DataType>,
+    orderBy: string | undefined,
+    orderDirection: 'ASC' | 'DESC' | undefined,
   ): SelectQueryBuilder<DataType> {
     if (orderBy && orderDirection) {
       querybuilder.orderBy(orderBy, orderDirection);
@@ -53,14 +56,16 @@ export class FilterService {
   }
 
   applyArrayContainsFilter<DataType extends object>(
-  querybuilder: SelectQueryBuilder<DataType>,
-  value: string | undefined,
-  field: string,
-): SelectQueryBuilder<DataType> {
-  if (value !== undefined) {
-    const paramName = field.replace(/\./g, '_');
-    querybuilder.andWhere(`${field} ILIKE :${paramName}`, { [paramName]: `%${value}%` });
+    querybuilder: SelectQueryBuilder<DataType>,
+    value: string | undefined,
+    field: string,
+  ): SelectQueryBuilder<DataType> {
+    if (value !== undefined) {
+      const paramName = field.replace(/\./g, '_');
+      querybuilder.andWhere(`${field} ILIKE :${paramName}`, {
+        [paramName]: `%${value}%`,
+      });
+    }
+    return querybuilder;
   }
-  return querybuilder;
-}
 }

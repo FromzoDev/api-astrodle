@@ -1,4 +1,10 @@
-import { Injectable, HttpException, InternalServerErrorException, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  HttpException,
+  InternalServerErrorException,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { AmateurOwner } from './amateur-owner.entity';
 import { createAmateurOwnerDTO } from './DTO/create-amateur-owner-dto';
 import { updateAmateurOwnerDTO } from './DTO/update-amateur-owner-dto';
@@ -9,9 +15,13 @@ import { ErrorMessage } from '../common/enum/error.enum';
 
 @Injectable()
 export class AmateurOwnerService {
-  constructor(private readonly amateurOwnerRepository: AmateurOwnerRepository) {}
+  constructor(
+    private readonly amateurOwnerRepository: AmateurOwnerRepository,
+  ) {}
 
-  async findPaginated(options: AmateurOwnerQueryDto): Promise<PaginationResult<AmateurOwner>> {
+  async findPaginated(
+    options: AmateurOwnerQueryDto,
+  ): Promise<PaginationResult<AmateurOwner>> {
     try {
       return await this.amateurOwnerRepository.findPaginated(options);
     } catch (error) {
@@ -56,7 +66,10 @@ export class AmateurOwnerService {
     }
   }
 
-  async updateAmateurOwner(id: number, dto: updateAmateurOwnerDTO): Promise<AmateurOwner> {
+  async updateAmateurOwner(
+    id: number,
+    dto: updateAmateurOwnerDTO,
+  ): Promise<AmateurOwner> {
     try {
       const amateurOwner = await this.amateurOwnerRepository.findOneById(id);
 
@@ -66,7 +79,8 @@ export class AmateurOwnerService {
 
       const finalFirstName = dto.firstName ?? amateurOwner.firstName;
       const finalLastName = dto.lastName ?? amateurOwner.lastName;
-      const finalConsent = dto.consentToDisplayName ?? amateurOwner.consentToDisplayName;
+      const finalConsent =
+        dto.consentToDisplayName ?? amateurOwner.consentToDisplayName;
 
       if (finalConsent && (!finalFirstName || !finalLastName)) {
         throw new BadRequestException(
@@ -74,7 +88,10 @@ export class AmateurOwnerService {
         );
       }
 
-      const updated = await this.amateurOwnerRepository.updateAmateurOwner(id, dto);
+      const updated = await this.amateurOwnerRepository.updateAmateurOwner(
+        id,
+        dto,
+      );
 
       if (!updated) {
         throw new NotFoundException(ErrorMessage.AMATEUR_OWNER_NOT_FOUND);

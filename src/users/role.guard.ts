@@ -21,27 +21,30 @@ export class RolesGuard implements CanActivate {
     ]);
 
     if (!requiredRoles?.length) return true;
-    
+
     const { user } = context.switchToHttp().getRequest();
     this.validateUser(user, requiredRoles);
     return true;
   }
 
   private validateUser(user: any, requiredRoles: Role[]): void {
-      if (!user) {
-        throw new UnauthorizedException(ErrorMessage.UNAUTHORIZED_MESSAGE);
-      }
+    if (!user) {
+      throw new UnauthorizedException(ErrorMessage.UNAUTHORIZED_MESSAGE);
+    }
 
-      if (!user.roles?.length ){
-        throw new ForbiddenException(ErrorMessage.UNAUTHORIZED_MESSAGE);
-      }
+    if (!user.roles?.length) {
+      throw new ForbiddenException(ErrorMessage.UNAUTHORIZED_MESSAGE);
+    }
 
-      const highestUserRoleLevel = Math.max(...user.roles.map((role: Role) => RoleHierarchy[role]));
-      const minimumRequiredRoleLevel = Math.min(...requiredRoles.map((role: Role) => RoleHierarchy[role]));
+    const highestUserRoleLevel = Math.max(
+      ...user.roles.map((role: Role) => RoleHierarchy[role]),
+    );
+    const minimumRequiredRoleLevel = Math.min(
+      ...requiredRoles.map((role: Role) => RoleHierarchy[role]),
+    );
 
-      if (highestUserRoleLevel < minimumRequiredRoleLevel) {
-        throw new ForbiddenException(ErrorMessage.UNAUTHORIZED_MESSAGE);
-      }
-
+    if (highestUserRoleLevel < minimumRequiredRoleLevel) {
+      throw new ForbiddenException(ErrorMessage.UNAUTHORIZED_MESSAGE);
+    }
   }
 }

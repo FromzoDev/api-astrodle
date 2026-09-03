@@ -16,32 +16,46 @@ export class SpaceSkyObjectRepository {
     private readonly filterService: FilterService,
   ) {}
 
-  async findPaginated(options: SpaceSkyObjectQueryDto): Promise<PaginationResult<SpaceSkyObject>> {
+  async findPaginated(
+    options: SpaceSkyObjectQueryDto,
+  ): Promise<PaginationResult<SpaceSkyObject>> {
     let queryBuilder = this.spaceSkyObjectRepository
       .createQueryBuilder('spaceSkyObject')
       .leftJoinAndSelect('spaceSkyObject.discoverer', 'discoverer')
       .leftJoinAndSelect('spaceSkyObject.telescope', 'telescope');
 
-    queryBuilder = this.filterService.applySearch(queryBuilder, options.search, [
-      'spaceSkyObject.name',
-      'spaceSkyObject.constellationName',
-      'spaceSkyObject.description',
-    ]);
+    queryBuilder = this.filterService.applySearch(
+      queryBuilder,
+      options.search,
+      [
+        'spaceSkyObject.name',
+        'spaceSkyObject.constellationName',
+        'spaceSkyObject.description',
+      ],
+    );
 
     const exactFilters: Array<{ field: string; value: unknown }> = [
       { field: 'spaceSkyObject.objectType', value: options.objectType },
     ];
 
     for (const { field, value } of exactFilters) {
-      queryBuilder = this.filterService.applyExactFilter(queryBuilder, value, field);
+      queryBuilder = this.filterService.applyExactFilter(
+        queryBuilder,
+        value,
+        field,
+      );
     }
 
     if (options.discovererId !== undefined) {
-      queryBuilder.andWhere('discoverer.id = :discovererId', { discovererId: options.discovererId });
+      queryBuilder.andWhere('discoverer.id = :discovererId', {
+        discovererId: options.discovererId,
+      });
     }
 
     if (options.telescopeId !== undefined) {
-      queryBuilder.andWhere('telescope.id = :telescopeId', { telescopeId: options.telescopeId });
+      queryBuilder.andWhere('telescope.id = :telescopeId', {
+        telescopeId: options.telescopeId,
+      });
     }
 
     queryBuilder = this.filterService.applyOrderFilter(
@@ -53,7 +67,9 @@ export class SpaceSkyObjectRepository {
     return this.paginationService.paginate(queryBuilder, options);
   }
 
-  async findOne(options: FindOneOptions<SpaceSkyObject>): Promise<SpaceSkyObject | null> {
+  async findOne(
+    options: FindOneOptions<SpaceSkyObject>,
+  ): Promise<SpaceSkyObject | null> {
     return this.spaceSkyObjectRepository.findOne(options);
   }
 
@@ -64,12 +80,17 @@ export class SpaceSkyObjectRepository {
     });
   }
 
-  async createSpaceSkyObject(data: Partial<SpaceSkyObject>): Promise<SpaceSkyObject> {
+  async createSpaceSkyObject(
+    data: Partial<SpaceSkyObject>,
+  ): Promise<SpaceSkyObject> {
     const spaceSkyObject = this.spaceSkyObjectRepository.create(data);
     return this.spaceSkyObjectRepository.save(spaceSkyObject);
   }
 
-  async updateSpaceSkyObject(id: number, updateData: Partial<SpaceSkyObject>): Promise<SpaceSkyObject | null> {
+  async updateSpaceSkyObject(
+    id: number,
+    updateData: Partial<SpaceSkyObject>,
+  ): Promise<SpaceSkyObject | null> {
     await this.spaceSkyObjectRepository.save({ id, ...updateData });
     return this.findOneById(id);
   }

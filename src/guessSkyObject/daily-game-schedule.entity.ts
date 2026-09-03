@@ -1,19 +1,27 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn, CreateDateColumn, Unique } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToOne,
+  JoinColumn,
+  CreateDateColumn,
+  Unique,
+} from 'typeorm';
 import { GuessSkyObjectGame } from './guess-sky-object-game.entity';
 
 @Entity()
 @Unique(['date'])
 export class DailyGameSchedule {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column({ type: 'date' })
-    date: string;
+  @Column({ type: 'date' })
+  date: string;
 
-    @OneToOne(() => GuessSkyObjectGame)
-    @JoinColumn({ name: 'guessSkyObjectGameId' })
-    guessSkyObjectGame: GuessSkyObjectGame;
+  @OneToOne(() => GuessSkyObjectGame)
+  @JoinColumn({ name: 'guessSkyObjectGameId' })
+  guessSkyObjectGame: GuessSkyObjectGame;
 
-    @CreateDateColumn()
-    createdAt: Date;
+  @CreateDateColumn()
+  createdAt: Date;
 }

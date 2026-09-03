@@ -1,7 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsEnum, IsArray, IsInt, IsOptional, IsBoolean } from 'class-validator';
+import {
+  IsString,
+  IsEnum,
+  IsArray,
+  IsInt,
+  IsOptional,
+  IsBoolean,
+} from 'class-validator';
 import { Transform, Type } from 'class-transformer';
-import { TelescopeLocation, TelescopeSpectrum } from '../../common/enum/telecope.enum';
+import {
+  TelescopeLocation,
+  TelescopeSpectrum,
+} from '../../common/enum/telecope.enum';
 
 export class updateTelescopeDTO {
   @ApiProperty({ required: false })
@@ -22,7 +32,10 @@ export class updateTelescopeDTO {
   @IsEnum(TelescopeSpectrum)
   telescopeSpectrum?: TelescopeSpectrum;
 
-  @ApiProperty({ required: false, description: 'Indique si le télescope est amateur' })
+  @ApiProperty({
+    required: false,
+    description: 'Indique si le télescope est amateur',
+  })
   @IsOptional()
   @Transform(({ value }) => {
     if (value === undefined || value === '') return undefined;
@@ -31,7 +44,11 @@ export class updateTelescopeDTO {
   @IsBoolean()
   isAmateur?: boolean;
 
-  @ApiProperty({ required: false, type: [Number], description: 'IDs des organisations associées' })
+  @ApiProperty({
+    required: false,
+    type: [Number],
+    description: 'IDs des organisations associées',
+  })
   @IsOptional()
   @Transform(({ value }) => {
     if (value === undefined || value === '') return undefined;

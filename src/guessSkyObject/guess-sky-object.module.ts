@@ -13,7 +13,11 @@ import { SpaceSkyObjectModule } from '../spaceSkyObject/space-sky-object.module'
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([GuessSkyObjectGame, GuessSkyObjectStats, DailyGameSchedule]),
+    TypeOrmModule.forFeature([
+      GuessSkyObjectGame,
+      GuessSkyObjectStats,
+      DailyGameSchedule,
+    ]),
     SpaceSkyObjectModule,
   ],
   controllers: [GuessSkyObjectController],

@@ -22,19 +22,27 @@ export class DailyGameScheduleRepository {
     });
   }
 
-  async create(date: string, guessSkyObjectGame: GuessSkyObjectGame): Promise<DailyGameSchedule | null> {
+  async create(
+    date: string,
+    guessSkyObjectGame: GuessSkyObjectGame,
+  ): Promise<DailyGameSchedule | null> {
     try {
       const schedule = this.repository.create({ date, guessSkyObjectGame });
       return await this.repository.save(schedule);
     } catch (error) {
-      if (error instanceof QueryFailedError && error.message.includes('duplicate')) {
+      if (
+        error instanceof QueryFailedError &&
+        error.message.includes('duplicate')
+      ) {
         return this.findByDate(date);
       }
       throw error;
     }
   }
 
-  async findPaginated(options: DailyGameScheduleQueryDto): Promise<PaginationResult<DailyGameSchedule>> {
+  async findPaginated(
+    options: DailyGameScheduleQueryDto,
+  ): Promise<PaginationResult<DailyGameSchedule>> {
     const queryBuilder = this.repository
       .createQueryBuilder('schedule')
       .leftJoinAndSelect('schedule.guessSkyObjectGame', 'game')

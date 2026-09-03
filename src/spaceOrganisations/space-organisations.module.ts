@@ -5,8 +5,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { SpaceOrganisation } from './space-organisations.entity';
 import { SpaceOrganisationRepository } from './space-organisation.repository';
 
-
-
 @Module({
   imports: [TypeOrmModule.forFeature([SpaceOrganisation])],
   controllers: [SpaceOrganisationController],

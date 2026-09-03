@@ -1,4 +1,10 @@
-import { Injectable, HttpException, InternalServerErrorException, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  HttpException,
+  InternalServerErrorException,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { Telescope } from './telescopes.entity';
 import { createTelescopeDTO } from './DTO/telescope-create-dto';
 import { updateTelescopeDTO } from './DTO/telescope-update-dto';
@@ -20,10 +26,14 @@ export class TelescopeService {
     private readonly imageUploadService: ImageUploadService,
   ) {}
 
-  async findPaginated(options: TelescopeQueryDto): Promise<PaginationResult<Telescope>> {
+  async findPaginated(
+    options: TelescopeQueryDto,
+  ): Promise<PaginationResult<Telescope>> {
     try {
       const result = await this.telescopeRepository.findPaginated(options);
-      result.items = result.items.map((telescope) => this.maskAmateurOwnerIfNeeded(telescope));
+      result.items = result.items.map((telescope) =>
+        this.maskAmateurOwnerIfNeeded(telescope),
+      );
       return result;
     } catch (error) {
       if (error instanceof HttpException) {
@@ -50,17 +60,28 @@ export class TelescopeService {
     }
   }
 
-  async createTelescope(dto: createTelescopeDTO, file?: MulterFile): Promise<Telescope> {
+  async createTelescope(
+    dto: createTelescopeDTO,
+    file?: MulterFile,
+  ): Promise<Telescope> {
     try {
-      this.validateAmateurConsistency(dto.isAmateur, dto.spaceOrganisationIds, dto.amateurOwnerId);
+      this.validateAmateurConsistency(
+        dto.isAmateur,
+        dto.spaceOrganisationIds,
+        dto.amateurOwnerId,
+      );
 
       const spaceOrganisations = dto.spaceOrganisationIds?.length
-        ? await this.spaceOrganisationRepository.findByIds(dto.spaceOrganisationIds)
+        ? await this.spaceOrganisationRepository.findByIds(
+            dto.spaceOrganisationIds,
+          )
         : [];
 
       let amateurOwner = undefined;
       if (dto.amateurOwnerId) {
-        amateurOwner = await this.amateurOwnerRepository.findOneById(dto.amateurOwnerId);
+        amateurOwner = await this.amateurOwnerRepository.findOneById(
+          dto.amateurOwnerId,
+        );
         if (!amateurOwner) {
           throw new BadRequestException(ErrorMessage.AMATEUR_OWNER_NOT_FOUND);
         }
@@ -76,10 +97,18 @@ export class TelescopeService {
       });
 
       if (file) {
-        const telescopeImage = await this.imageUploadService.uploadImage(file, 'telescopes', telescope.id, {
-          maxSizeMb: 100,
-        });
-        const updated = await this.telescopeRepository.updateTelescope(telescope.id, { telescopeImage });
+        const telescopeImage = await this.imageUploadService.uploadImage(
+          file,
+          'telescopes',
+          telescope.id,
+          {
+            maxSizeMb: 100,
+          },
+        );
+        const updated = await this.telescopeRepository.updateTelescope(
+          telescope.id,
+          { telescopeImage },
+        );
         return this.maskAmateurOwnerIfNeeded(updated);
       }
 
@@ -92,7 +121,11 @@ export class TelescopeService {
     }
   }
 
-  async updateTelescope(id: number, dto: updateTelescopeDTO, file?: MulterFile): Promise<Telescope> {
+  async updateTelescope(
+    id: number,
+    dto: updateTelescopeDTO,
+    file?: MulterFile,
+  ): Promise<Telescope> {
     try {
       const telescope = await this.telescopeRepository.findOneById(id);
 
@@ -101,18 +134,26 @@ export class TelescopeService {
       }
 
       const finalIsAmateur = dto.isAmateur ?? telescope.isAmateur;
-      this.validateAmateurConsistency(finalIsAmateur, dto.spaceOrganisationIds, dto.amateurOwnerId);
+      this.validateAmateurConsistency(
+        finalIsAmateur,
+        dto.spaceOrganisationIds,
+        dto.amateurOwnerId,
+      );
 
       let spaceOrganisations = telescope.spaceOrganisations;
       if (dto.spaceOrganisationIds !== undefined) {
         spaceOrganisations = dto.spaceOrganisationIds.length
-          ? await this.spaceOrganisationRepository.findByIds(dto.spaceOrganisationIds)
+          ? await this.spaceOrganisationRepository.findByIds(
+              dto.spaceOrganisationIds,
+            )
           : [];
       }
 
       let amateurOwner = telescope.amateurOwner;
       if (dto.amateurOwnerId !== undefined) {
-        amateurOwner = await this.amateurOwnerRepository.findOneById(dto.amateurOwnerId);
+        amateurOwner = await this.amateurOwnerRepository.findOneById(
+          dto.amateurOwnerId,
+        );
         if (!amateurOwner) {
           throw new BadRequestException(ErrorMessage.AMATEUR_OWNER_NOT_FOUND);
         }
@@ -120,9 +161,14 @@ export class TelescopeService {
 
       let telescopeImage: string | undefined;
       if (file) {
-        telescopeImage = await this.imageUploadService.uploadImage(file, 'telescopes', id, {
-          maxSizeMb: 100,
-        });
+        telescopeImage = await this.imageUploadService.uploadImage(
+          file,
+          'telescopes',
+          id,
+          {
+            maxSizeMb: 100,
+          },
+        );
       }
 
       const updated = await this.telescopeRepository.updateTelescope(id, {
@@ -168,16 +214,23 @@ export class TelescopeService {
     amateurOwnerId: number | undefined,
   ): void {
     if (isAmateur && spaceOrganisationIds?.length) {
-      throw new BadRequestException("Un télescope amateur ne peut pas être lié à une organisation spatiale");
+      throw new BadRequestException(
+        'Un télescope amateur ne peut pas être lié à une organisation spatiale',
+      );
     }
 
     if (!isAmateur && amateurOwnerId) {
-      throw new BadRequestException("Un télescope professionnel ne peut pas avoir de propriétaire amateur");
+      throw new BadRequestException(
+        'Un télescope professionnel ne peut pas avoir de propriétaire amateur',
+      );
     }
   }
 
   private maskAmateurOwnerIfNeeded(telescope: Telescope): Telescope {
-    if (telescope.amateurOwner && !telescope.amateurOwner.consentToDisplayName) {
+    if (
+      telescope.amateurOwner &&
+      !telescope.amateurOwner.consentToDisplayName
+    ) {
       telescope.amateurOwner = {
         ...telescope.amateurOwner,
         firstName: undefined,

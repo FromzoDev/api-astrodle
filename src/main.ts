@@ -1,9 +1,8 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ValidationPipe } from '@nestjs/common';
+import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
-import  { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -13,7 +12,7 @@ async function bootstrap() {
   const config = new DocumentBuilder()
     .setTitle('Astrodle API documentation')
     .setDescription('API documentation for the Astrodle application')
-    .setVersion('1.0') 
+    .setVersion('1.0')
     .addBearerAuth(
       {
         type: 'http',
@@ -21,7 +20,7 @@ async function bootstrap() {
         bearerFormat: 'JWT',
         description: 'Enter JWT token',
       },
-      'JWT-auth', 
+      'JWT-auth',
     )
     .build();
 
@@ -32,20 +31,21 @@ async function bootstrap() {
   });
 
   app.enableCors({
-  origin: ['http://localhost:3001', 'http://example.com'],
-  credentials: true,
+    origin: ['http://localhost:3001', 'http://example.com'],
+    credentials: true,
   });
 
   app.useGlobalPipes(
-  new ValidationPipe({
-    transform: true,       
-    whitelist: true,       
-    forbidNonWhitelisted: true, 
-  }),
-);
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    }),
+  );
 
-  app.useGlobalPipes(new ValidationPipe()); 
+  app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new HttpExceptionFilter());
+  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
   await app.listen(process.env.PORT ?? 3000);
 }

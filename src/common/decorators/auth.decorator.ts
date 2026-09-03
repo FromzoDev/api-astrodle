@@ -5,7 +5,4 @@ import { RolesGuard } from '../../users/role.guard';
 import { Role } from '../enum/roles.enum';
 
 export const Auth = (...roles: Role[]) =>
-  applyDecorators(
-    Roles(...roles),
-    UseGuards(AuthGuard, RolesGuard),
-  );
+  applyDecorators(Roles(...roles), UseGuards(AuthGuard, RolesGuard));

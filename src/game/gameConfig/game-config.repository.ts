@@ -20,7 +20,10 @@ export class GameConfigRepository {
     return this.gameConfigRepository.findOneBy({ id });
   }
 
-  async findOneByGameTypeAndMode(gameType: GameType, mode: GameMode): Promise<GameConfig | null> {
+  async findOneByGameTypeAndMode(
+    gameType: GameType,
+    mode: GameMode,
+  ): Promise<GameConfig | null> {
     return this.gameConfigRepository.findOneBy({ gameType, mode });
   }
 
@@ -33,14 +36,20 @@ export class GameConfigRepository {
       const gameConfig = this.gameConfigRepository.create(data);
       return await this.gameConfigRepository.save(gameConfig);
     } catch (error) {
-      if (error instanceof QueryFailedError && error.message.includes('duplicate')) {
+      if (
+        error instanceof QueryFailedError &&
+        error.message.includes('duplicate')
+      ) {
         throw new ConflictException('Cette combinaison jeu/mode existe déjà');
       }
       throw error;
     }
   }
 
-  async updateGameConfig(id: number, updateData: Partial<GameConfig>): Promise<GameConfig | null> {
+  async updateGameConfig(
+    id: number,
+    updateData: Partial<GameConfig>,
+  ): Promise<GameConfig | null> {
     await this.gameConfigRepository.update(id, updateData);
     return this.findOneById(id);
   }

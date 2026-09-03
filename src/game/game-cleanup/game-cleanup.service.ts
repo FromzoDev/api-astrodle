@@ -20,7 +20,8 @@ export class GameCleanupService {
     const cutoffDate = new Date();
     cutoffDate.setHours(cutoffDate.getHours() - 24);
 
-    const sessions = await this.gameSessionRepository.findAbandonableSessions(cutoffDate);
+    const sessions =
+      await this.gameSessionRepository.findAbandonableSessions(cutoffDate);
 
     if (sessions.length === 0) {
       return;
@@ -30,17 +31,28 @@ export class GameCleanupService {
     await this.gameSessionRepository.abandonSessions(sessionIds);
 
     for (const session of sessions) {
-      await this.gameStatsRepository.incrementAbandoned(session.gameType, session.mode);
+      await this.gameStatsRepository.incrementAbandoned(
+        session.gameType,
+        session.mode,
+      );
       await this.incrementContentAbandoned(session.gameType, session.contentId);
     }
 
-    this.logger.log(`${sessions.length} session(s) marquée(s) comme abandonnée(s)`);
+    this.logger.log(
+      `${sessions.length} session(s) marquée(s) comme abandonnée(s)`,
+    );
   }
 
-  private async incrementContentAbandoned(gameType: GameType, contentId: number): Promise<void> {
+  private async incrementContentAbandoned(
+    gameType: GameType,
+    contentId: number,
+  ): Promise<void> {
     switch (gameType) {
       case GameType.GuessSkyObject: {
-        const game = await this.guessSkyObjectGameRepository.findBySpaceSkyObjectId(contentId);
+        const game =
+          await this.guessSkyObjectGameRepository.findBySpaceSkyObjectId(
+            contentId,
+          );
         if (game) {
           await this.guessSkyObjectGameRepository.incrementAbandoned(game.id);
         }

@@ -48,6 +48,7 @@ services:
       mc anonymous set download local/astrodle/space-organisations;
       mc anonymous set download local/astrodle/personalities;
       mc anonymous set download local/astrodle/space-sky-objects;
+      mc anonymous set download local/astrodle/telescopes;
       exit 0;
       "
   app:

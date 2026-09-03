@@ -10,9 +10,7 @@ export interface GameOverviewEntry {
 
 @Injectable()
 export class DashboardStatsService {
-  constructor(
-    private readonly guessSkyObjectService: GuessSkyObjectService,
-  ) {}
+  constructor(private readonly guessSkyObjectService: GuessSkyObjectService) {}
 
   async getAllGamesOverview(mode: GameMode): Promise<GameOverviewEntry[]> {
     const results = await Promise.all([
@@ -22,10 +20,16 @@ export class DashboardStatsService {
     return results;
   }
 
-  private async buildEntry(gameType: GameType, mode: GameMode): Promise<GameOverviewEntry> {
+  private async buildEntry(
+    gameType: GameType,
+    mode: GameMode,
+  ): Promise<GameOverviewEntry> {
     switch (gameType) {
       case GameType.GuessSkyObject:
-        return { gameType, stats: await this.guessSkyObjectService.getGlobalStats(mode) };
+        return {
+          gameType,
+          stats: await this.guessSkyObjectService.getGlobalStats(mode),
+        };
       default:
         return { gameType, stats: {} };
     }

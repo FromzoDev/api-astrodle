@@ -1,4 +1,8 @@
-import { HttpException, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  HttpException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { SignInDto } from './DTO/sign-in-dto';
 import * as bcrypt from 'bcrypt';
@@ -10,15 +14,14 @@ import { UsersRepository } from '../users/users.repository';
 
 @Injectable()
 export class AuthService {
-  private fakeHash : string; 
-  
+  private fakeHash: string;
+
   constructor(
     private userRepository: UsersRepository,
     private jwtService: JwtService,
     private blacklistRepository: BlacklistRepository,
   ) {
-    
-    bcrypt.hash('fakepassword', 10).then(hash => {
+    bcrypt.hash('fakepassword', 10).then((hash) => {
       this.fakeHash = hash;
     });
   }
@@ -47,7 +50,10 @@ export class AuthService {
 
     const [access_token, refresh_token] = await Promise.all([
       this.jwtService.signAsync(payload, { expiresIn: '15m' }),
-      this.jwtService.signAsync({ ...payload, refresh: true }, { expiresIn: '7d' }), // ✅
+      this.jwtService.signAsync(
+        { ...payload, refresh: true },
+        { expiresIn: '7d' },
+      ), // ✅
     ]);
 
     return { access_token, refresh_token };
@@ -70,9 +76,8 @@ export class AuthService {
       }
 
       return await this.generateTokens(payload.sub, payload.roles);
-
     } catch (error) {
-      if (error instanceof HttpException) throw error; 
+      if (error instanceof HttpException) throw error;
       throw new UnauthorizedException(ErrorMessage.REFRESH_TOKEN_ERROR);
     }
   }

@@ -18,16 +18,24 @@ export class GuessSkyObjectGameRepository {
     private readonly filterService: FilterService,
   ) {}
 
-  async findPaginated(options: GuessSkyObjectGameQueryDto): Promise<PaginationResult<GuessSkyObjectGame>> {
+  async findPaginated(
+    options: GuessSkyObjectGameQueryDto,
+  ): Promise<PaginationResult<GuessSkyObjectGame>> {
     let queryBuilder = this.repository
       .createQueryBuilder('game')
       .leftJoinAndSelect('game.spaceSkyObject', 'spaceSkyObject');
 
-    queryBuilder = this.filterService.applySearch(queryBuilder, options.search, [
-      'spaceSkyObject.name',
-    ]);
+    queryBuilder = this.filterService.applySearch(
+      queryBuilder,
+      options.search,
+      ['spaceSkyObject.name'],
+    );
 
-    queryBuilder = this.filterService.applyExactFilter(queryBuilder, options.isEnabled, 'game.isEnabled');
+    queryBuilder = this.filterService.applyExactFilter(
+      queryBuilder,
+      options.isEnabled,
+      'game.isEnabled',
+    );
 
     queryBuilder = this.filterService.applyOrderFilter(
       queryBuilder,
@@ -38,7 +46,9 @@ export class GuessSkyObjectGameRepository {
     return this.paginationService.paginate(queryBuilder, options);
   }
 
-  async findBySpaceSkyObjectId(spaceSkyObjectId: number): Promise<GuessSkyObjectGame | null> {
+  async findBySpaceSkyObjectId(
+    spaceSkyObjectId: number,
+  ): Promise<GuessSkyObjectGame | null> {
     return this.repository.findOne({
       where: { spaceSkyObject: { id: spaceSkyObjectId } },
       relations: ['spaceSkyObject'],
@@ -77,7 +87,9 @@ export class GuessSkyObjectGameRepository {
     const count = await this.repository.count({ where: { isEnabled: true } });
     if (count === 0) return null;
 
-    const seed = date.split('-').reduce((acc, part) => acc + parseInt(part, 10), 0);
+    const seed = date
+      .split('-')
+      .reduce((acc, part) => acc + parseInt(part, 10), 0);
     const index = seed % count;
 
     const game = await this.repository
@@ -97,7 +109,9 @@ export class GuessSkyObjectGameRepository {
   }
 
   async create(spaceSkyObjectId: number): Promise<GuessSkyObjectGame> {
-    const entity = this.repository.create({ spaceSkyObject: { id: spaceSkyObjectId } as any });
+    const entity = this.repository.create({
+      spaceSkyObject: { id: spaceSkyObjectId },
+    });
     return this.repository.save(entity);
   }
 
@@ -105,17 +119,23 @@ export class GuessSkyObjectGameRepository {
     await this.repository.update(id, { isEnabled });
   }
 
-  async incrementStats(id: number, attemptsUsed: number, won: boolean): Promise<void> {
+  async incrementStats(
+    id: number,
+    attemptsUsed: number,
+    won: boolean,
+  ): Promise<void> {
     const game = await this.repository.findOneBy({ id });
 
     const totalPlayed = game.totalPlayed + 1;
     const totalWon = game.totalWon + (won ? 1 : 0);
     const totalLost = game.totalLost + (won ? 0 : 1);
-    const totalAttemptsSum = game.avgAttemptsUsed * game.totalPlayed + attemptsUsed;
+    const totalAttemptsSum =
+      game.avgAttemptsUsed * game.totalPlayed + attemptsUsed;
 
     const winCountByAttemptNumber = { ...game.winCountByAttemptNumber };
     if (won) {
-      winCountByAttemptNumber[attemptsUsed] = (winCountByAttemptNumber[attemptsUsed] ?? 0) + 1;
+      winCountByAttemptNumber[attemptsUsed] =
+        (winCountByAttemptNumber[attemptsUsed] ?? 0) + 1;
     }
 
     await this.repository.update(id, {
@@ -127,7 +147,7 @@ export class GuessSkyObjectGameRepository {
       winCountByAttemptNumber,
     });
   }
-  
+
   async incrementAbandoned(id: number): Promise<void> {
     await this.repository.increment({ id }, 'totalAbandoned', 1);
   }

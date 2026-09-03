@@ -16,13 +16,17 @@ export class AmateurOwnerRepository {
     private readonly filterService: FilterService,
   ) {}
 
-  async findPaginated(options: AmateurOwnerQueryDto): Promise<PaginationResult<AmateurOwner>> {
-    let queryBuilder = this.amateurOwnerRepository.createQueryBuilder('amateurOwner');
+  async findPaginated(
+    options: AmateurOwnerQueryDto,
+  ): Promise<PaginationResult<AmateurOwner>> {
+    let queryBuilder =
+      this.amateurOwnerRepository.createQueryBuilder('amateurOwner');
 
-    queryBuilder = this.filterService.applySearch(queryBuilder, options.search, [
-      'amateurOwner.firstName',
-      'amateurOwner.lastName',
-    ]);
+    queryBuilder = this.filterService.applySearch(
+      queryBuilder,
+      options.search,
+      ['amateurOwner.firstName', 'amateurOwner.lastName'],
+    );
 
     queryBuilder = this.filterService.applyOrderFilter(
       queryBuilder,
@@ -40,20 +44,33 @@ export class AmateurOwnerRepository {
       where: { id: In(result.items.map((item) => item.id)) },
       relations: ['telescopes'],
     });
-    const telescopesById = new Map(withTelescopes.map((amateurOwner) => [amateurOwner.id, amateurOwner.telescopes]));
+    const telescopesById = new Map(
+      withTelescopes.map((amateurOwner) => [
+        amateurOwner.id,
+        amateurOwner.telescopes,
+      ]),
+    );
 
     return {
       ...result,
-      items: result.items.map((item) => ({ ...item, telescopes: telescopesById.get(item.id) ?? [] })),
+      items: result.items.map((item) => ({
+        ...item,
+        telescopes: telescopesById.get(item.id) ?? [],
+      })),
     };
   }
 
-  async findOne(options: FindOneOptions<AmateurOwner>): Promise<AmateurOwner | null> {
+  async findOne(
+    options: FindOneOptions<AmateurOwner>,
+  ): Promise<AmateurOwner | null> {
     return this.amateurOwnerRepository.findOne(options);
   }
 
   async findOneById(id: number): Promise<AmateurOwner | null> {
-    return this.amateurOwnerRepository.findOne({ where: { id }, relations: ['telescopes'] });
+    return this.amateurOwnerRepository.findOne({
+      where: { id },
+      relations: ['telescopes'],
+    });
   }
 
   async createAmateurOwner(data: Partial<AmateurOwner>): Promise<AmateurOwner> {
@@ -61,7 +78,10 @@ export class AmateurOwnerRepository {
     return this.amateurOwnerRepository.save(amateurOwner);
   }
 
-  async updateAmateurOwner(id: number, updateData: Partial<AmateurOwner>): Promise<AmateurOwner | null> {
+  async updateAmateurOwner(
+    id: number,
+    updateData: Partial<AmateurOwner>,
+  ): Promise<AmateurOwner | null> {
     await this.amateurOwnerRepository.update(id, updateData);
     return this.findOneById(id);
   }

@@ -1,6 +1,9 @@
 import { Controller, Get, HttpStatus } from '@nestjs/common';
 import { ApiResponse } from '../common/interfaces/response.interface';
-import { ObjectType, ObjectTypeMetadata } from '../common/enum/object-type.enum';
+import {
+  ObjectType,
+  ObjectTypeMetadata,
+} from '../common/enum/object-type.enum';
 import { SuccessMessage } from '../common/enum/success.enum';
 
 interface ObjectTypeResponse {

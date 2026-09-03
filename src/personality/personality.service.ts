@@ -1,4 +1,9 @@
-import { Injectable, HttpException, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  HttpException,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { Personality } from './personality.entity';
 import { createPersonalityDTO } from './DTO/create-personality-dto';
 import { updatePersonalityDTO } from './DTO/update-personality-dto';
@@ -16,7 +21,9 @@ export class PersonalityService {
     private readonly imageUploadService: ImageUploadService,
   ) {}
 
-  async findPaginated(options: PersonalityQueryDto): Promise<PaginationResult<Personality>> {
+  async findPaginated(
+    options: PersonalityQueryDto,
+  ): Promise<PaginationResult<Personality>> {
     try {
       return await this.personalityRepository.findPaginated(options);
     } catch (error) {
@@ -44,19 +51,29 @@ export class PersonalityService {
     }
   }
 
-  async createPersonality(dto: createPersonalityDTO, file?: MulterFile): Promise<Personality> {
+  async createPersonality(
+    dto: createPersonalityDTO,
+    file?: MulterFile,
+  ): Promise<Personality> {
     try {
-        const saved = await this.personalityRepository.createPersonality({
-            ...dto,
-            dateOfBirth: new Date(dto.dateOfBirth),
-            dateOfDeath: dto.dateOfDeath ? new Date(dto.dateOfDeath) : undefined,
-        });
+      const saved = await this.personalityRepository.createPersonality({
+        ...dto,
+        dateOfBirth: new Date(dto.dateOfBirth),
+        dateOfDeath: dto.dateOfDeath ? new Date(dto.dateOfDeath) : undefined,
+      });
 
       if (file) {
-        const personalityImage = await this.imageUploadService.uploadImage(file, 'personalities', saved.id, {
-          maxSizeMb: 100,
+        const personalityImage = await this.imageUploadService.uploadImage(
+          file,
+          'personalities',
+          saved.id,
+          {
+            maxSizeMb: 100,
+          },
+        );
+        return this.personalityRepository.updatePersonality(saved.id, {
+          personalityImage,
         });
-        return this.personalityRepository.updatePersonality(saved.id, { personalityImage });
       }
 
       return saved;
@@ -68,7 +85,11 @@ export class PersonalityService {
     }
   }
 
-  async updatePersonality(id: number, dto: updatePersonalityDTO, file?: MulterFile): Promise<Personality> {
+  async updatePersonality(
+    id: number,
+    dto: updatePersonalityDTO,
+    file?: MulterFile,
+  ): Promise<Personality> {
     try {
       const personality = await this.personalityRepository.findOneById(id);
 
@@ -78,15 +99,20 @@ export class PersonalityService {
 
       let personalityImage: string | undefined;
       if (file) {
-        personalityImage = await this.imageUploadService.uploadImage(file, 'personalities', id, {
-          maxSizeMb: 100,
-        });
+        personalityImage = await this.imageUploadService.uploadImage(
+          file,
+          'personalities',
+          id,
+          {
+            maxSizeMb: 100,
+          },
+        );
       }
 
       const updated = await this.personalityRepository.updatePersonality(id, {
         ...dto,
-        ...dto.dateOfBirth && { dateOfBirth: new Date(dto.dateOfBirth) },
-        ...dto.dateOfDeath && { dateOfDeath: new Date(dto.dateOfDeath) },
+        ...(dto.dateOfBirth && { dateOfBirth: new Date(dto.dateOfBirth) }),
+        ...(dto.dateOfDeath && { dateOfDeath: new Date(dto.dateOfDeath) }),
         ...(personalityImage && { personalityImage }),
       });
 

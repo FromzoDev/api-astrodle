@@ -10,7 +10,9 @@ export class GameController {
   constructor(private readonly gameService: GameService) {}
 
   @Get('modes/:mode/available-games')
-  async getAvailableGames(@Param('mode') mode: GameMode): Promise<ApiResponse<GameType[]>> {
+  async getAvailableGames(
+    @Param('mode') mode: GameMode,
+  ): Promise<ApiResponse<GameType[]>> {
     const data = await this.gameService.getAvailableGames(mode);
     return {
       code: HttpStatus.OK,

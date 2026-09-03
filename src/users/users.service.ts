@@ -1,4 +1,12 @@
-import { ConflictException, ForbiddenException, HttpException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  ForbiddenException,
+  HttpException,
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { UsersRepository } from './users.repository';
 import { User } from './user.entity';
 import { createUserDTO } from './DTO/create-user-dto';
@@ -11,21 +19,19 @@ import { userQueryDto } from './DTO/user-query-dto';
 import { ImageUploadService } from '../shared/upload/image-upload.service';
 import { MulterFile } from '../types/multer-file.type';
 
-
 @Injectable()
 export class UsersService {
   private readonly logger = new Logger(UsersService.name);
 
   constructor(
     private readonly usersRepository: UsersRepository,
-    private readonly imageUploadService: ImageUploadService
-  ) { }
+    private readonly imageUploadService: ImageUploadService,
+  ) {}
 
   async findPaginated(options: userQueryDto): Promise<PaginationResult<User>> {
     try {
       return await this.usersRepository.findPaginated(options);
     } catch (error) {
-
       if (error instanceof HttpException) {
         throw error;
       }
@@ -42,8 +48,7 @@ export class UsersService {
         throw new NotFoundException(ErrorMessage.USER_NOT_FOUND);
       }
 
-      return user
-
+      return user;
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -61,7 +66,7 @@ export class UsersService {
         throw new NotFoundException(ErrorMessage.USER_NOT_FOUND);
       }
 
-      return user
+      return user;
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;
@@ -69,11 +74,12 @@ export class UsersService {
 
       throw new InternalServerErrorException(ErrorMessage.GLOBAL_ERROR_MESSAGE);
     }
-
   }
 
-  async createUser(createUserDTO: createUserDTO, file?: MulterFile): Promise<User> {
-
+  async createUser(
+    createUserDTO: createUserDTO,
+    file?: MulterFile,
+  ): Promise<User> {
     try {
       const { email, username, password } = createUserDTO;
 
@@ -99,27 +105,36 @@ export class UsersService {
       const savedUser = await this.usersRepository.createUser(userToSave);
 
       if (file && savedUser) {
-        const avatarUrl = await this.imageUploadService.uploadImage(file, 'users', savedUser.id, {
-          maxSizeMb: 100,
-        });
+        const avatarUrl = await this.imageUploadService.uploadImage(
+          file,
+          'users',
+          savedUser.id,
+          {
+            maxSizeMb: 100,
+          },
+        );
 
-        return await this.usersRepository.updateUser(savedUser.id, { profilePicture: avatarUrl });
+        return await this.usersRepository.updateUser(savedUser.id, {
+          profilePicture: avatarUrl,
+        });
       }
 
       return savedUser;
-
     } catch (error) {
-
       if (error instanceof HttpException) {
         throw error;
       }
 
       throw new InternalServerErrorException(ErrorMessage.GLOBAL_ERROR_MESSAGE);
-
     }
   }
-  
-  async updateUser( updateUserDTO: updateUserDTO, id: number, currentUser: User, file?: MulterFile, ): Promise<User> {
+
+  async updateUser(
+    updateUserDTO: updateUserDTO,
+    id: number,
+    currentUser: User,
+    file?: MulterFile,
+  ): Promise<User> {
     try {
       this.logger.debug(
         `updateUser(${id}) isActive=${updateUserDTO.isActive} (type: ${typeof updateUserDTO.isActive})`,
@@ -148,18 +163,21 @@ export class UsersService {
       let avatarUrl: string | undefined;
 
       if (file) {
-        avatarUrl = await this.imageUploadService.uploadImage(file, 'users', id, {
-          maxSizeMb: 100,
-        });
+        avatarUrl = await this.imageUploadService.uploadImage(
+          file,
+          'users',
+          id,
+          {
+            maxSizeMb: 100,
+          },
+        );
       }
 
       return this.usersRepository.updateUser(id, {
         ...updateUserDTO,
-        ...(avatarUrl && { avatarUrl }),
+        ...(avatarUrl && { profilePicture: avatarUrl }),
       });
-
     } catch (error) {
-
       if (error instanceof HttpException) {
         throw error;
       }
@@ -169,17 +187,14 @@ export class UsersService {
   }
 
   async deleteUser(id: number): Promise<void> {
-
     try {
-      return await this.usersRepository.deleteUser(id)
+      return await this.usersRepository.deleteUser(id);
     } catch (error) {
-
       if (error instanceof HttpException) {
         throw error;
       }
 
       throw new InternalServerErrorException(ErrorMessage.DELETE_ERROR_MESSAGE);
     }
-
   }
 }

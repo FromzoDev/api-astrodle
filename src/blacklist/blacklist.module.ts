@@ -7,6 +7,6 @@ import { BlacklistRepository } from './blacklist.repository';
 @Module({
   imports: [TypeOrmModule.forFeature([TokenBlacklist])],
   providers: [BlacklistRepository],
-  exports: [BlacklistRepository], 
+  exports: [BlacklistRepository],
 })
 export class BlacklistModule {}

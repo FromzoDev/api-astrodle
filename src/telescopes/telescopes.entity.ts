@@ -1,47 +1,69 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, ManyToMany, ManyToOne, JoinTable, JoinColumn, OneToMany } from 'typeorm';
-import { TelescopeLocation, TelescopeSpectrum } from '../common/enum/telecope.enum';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+  ManyToMany,
+  ManyToOne,
+  JoinTable,
+  JoinColumn,
+  OneToMany,
+} from 'typeorm';
+import {
+  TelescopeLocation,
+  TelescopeSpectrum,
+} from '../common/enum/telecope.enum';
 import { SpaceOrganisation } from '../spaceOrganisations/space-organisations.entity';
 import { AmateurOwner } from '../amateur-owner/amateur-owner.entity';
 import { SpaceSkyObject } from '../spaceSkyObject/space-sky-object.entity';
 
 @Entity()
 export class Telescope {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column()
-    name: string;
+  @Column()
+  name: string;
 
-    @Column({ nullable: true })
-    telescopeImage?: string;
-    
-    @Column()
-    telescopeLocation: TelescopeLocation;
+  @Column({ nullable: true })
+  telescopeImage?: string;
 
-    @Column()
-    telescopeSpectrum: TelescopeSpectrum;
+  @Column()
+  telescopeLocation: TelescopeLocation;
 
-    @Column({ default: false })
-    isAmateur: boolean;
+  @Column()
+  telescopeSpectrum: TelescopeSpectrum;
 
-    @ManyToMany(() => SpaceOrganisation, (spaceOrganisation) => spaceOrganisation.telescopes)
-    @JoinTable({
-      name: 'telescope_space_organisation',
-      joinColumn: { name: 'telescopeId', referencedColumnName: 'id' },
-      inverseJoinColumn: { name: 'spaceOrganisationId', referencedColumnName: 'id' },
-    })
-    spaceOrganisations?: SpaceOrganisation[];
+  @Column({ default: false })
+  isAmateur: boolean;
 
-    @ManyToOne(() => AmateurOwner, (amateurOwner) => amateurOwner.telescopes, { nullable: true })
-    @JoinColumn({ name: 'amateurOwnerId' })
-    amateurOwner?: AmateurOwner;
+  @ManyToMany(
+    () => SpaceOrganisation,
+    (spaceOrganisation) => spaceOrganisation.telescopes,
+  )
+  @JoinTable({
+    name: 'telescope_space_organisation',
+    joinColumn: { name: 'telescopeId', referencedColumnName: 'id' },
+    inverseJoinColumn: {
+      name: 'spaceOrganisationId',
+      referencedColumnName: 'id',
+    },
+  })
+  spaceOrganisations?: SpaceOrganisation[];
 
-    @OneToMany(() => SpaceSkyObject, (spaceSkyObject) => spaceSkyObject.telescope)
-    observations?: SpaceSkyObject[];
+  @ManyToOne(() => AmateurOwner, (amateurOwner) => amateurOwner.telescopes, {
+    nullable: true,
+  })
+  @JoinColumn({ name: 'amateurOwnerId' })
+  amateurOwner?: AmateurOwner;
 
-    @CreateDateColumn()
-    createdAt: Date;
+  @OneToMany(() => SpaceSkyObject, (spaceSkyObject) => spaceSkyObject.telescope)
+  observations?: SpaceSkyObject[];
 
-    @UpdateDateColumn()
-    updatedAt: Date;
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

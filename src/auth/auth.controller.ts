@@ -1,5 +1,15 @@
-
-import { Body, Controller, Post, HttpCode, HttpStatus, UseGuards, Get, Request, Res, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  HttpCode,
+  HttpStatus,
+  UseGuards,
+  Get,
+  Request,
+  Res,
+  Req,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SignInDto } from './DTO/sign-in-dto';
 import { Public } from '../common/decorators/public.decorator';
@@ -13,12 +23,14 @@ import { Throttle } from '@nestjs/throttler';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @Throttle({ default: { limit: 5, ttl: 60000 }})
+  @Throttle({ default: { limit: 5, ttl: 60000 } })
   @UseGuards(CustomThrottlerGuard)
   @Public()
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  async signIn(@Body() signInDto: SignInDto): Promise<ApiResponse<{ access_token: string; refresh_token: string }>> {
+  async signIn(
+    @Body() signInDto: SignInDto,
+  ): Promise<ApiResponse<{ access_token: string; refresh_token: string }>> {
     const tokens = await this.authService.signIn(signInDto);
     return {
       code: HttpStatus.OK,
@@ -43,7 +55,9 @@ export class AuthController {
   @Public()
   @HttpCode(HttpStatus.OK)
   @Post('refresh')
-  async refresh(@Body('refresh_token') refreshToken: string): Promise<ApiResponse<{ access_token: string; refresh_token: string }>> {
+  async refresh(
+    @Body('refresh_token') refreshToken: string,
+  ): Promise<ApiResponse<{ access_token: string; refresh_token: string }>> {
     const tokens = await this.authService.refresh(refreshToken);
     return {
       code: HttpStatus.OK,
@@ -52,5 +66,3 @@ export class AuthController {
     };
   }
 }
-
-

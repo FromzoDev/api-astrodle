@@ -12,6 +12,7 @@ import { TelescopeQueryDto } from './DTO/telescope-query-dto';
 import { TelescopeRepository } from './telescopes.repository';
 import { SpaceOrganisationRepository } from '../spaceOrganisations/space-organisation.repository';
 import { AmateurOwnerRepository } from '../amateur-owner/amateur-owner.repository';
+import { AmateurOwner } from '../amateur-owner/amateur-owner.entity';
 import { PaginationResult } from '../shared/pagination/pagination.interface';
 import { ErrorMessage } from '../common/enum/error.enum';
 import { ImageUploadService } from '../shared/upload/image-upload.service';
@@ -77,11 +78,11 @@ export class TelescopeService {
           )
         : [];
 
-      let amateurOwner = undefined;
+      let amateurOwner: AmateurOwner | undefined = undefined;
       if (dto.amateurOwnerId) {
-        amateurOwner = await this.amateurOwnerRepository.findOneById(
-          dto.amateurOwnerId,
-        );
+        amateurOwner =
+          (await this.amateurOwnerRepository.findOneById(dto.amateurOwnerId)) ??
+          undefined;
         if (!amateurOwner) {
           throw new BadRequestException(ErrorMessage.AMATEUR_OWNER_NOT_FOUND);
         }

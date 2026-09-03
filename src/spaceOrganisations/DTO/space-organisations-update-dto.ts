@@ -18,7 +18,9 @@ export class updateSpaceOrganisationDTO {
     title: 'Name',
   })
   @IsOptional()
-  @Transform(({ value }) => (value === '' ? undefined : value))
+  @Transform(({ value }: { value: unknown }) =>
+    value === '' ? undefined : value,
+  )
   @IsString()
   name?: string;
 
@@ -31,7 +33,9 @@ export class updateSpaceOrganisationDTO {
     title: 'Description',
   })
   @IsOptional()
-  @Transform(({ value }) => (value === '' ? undefined : value))
+  @Transform(({ value }: { value: unknown }) =>
+    value === '' ? undefined : value,
+  )
   @IsString()
   description?: string;
 
@@ -44,9 +48,9 @@ export class updateSpaceOrganisationDTO {
     title: 'Countries',
   })
   @IsOptional()
-  @Transform(({ value }) => {
+  @Transform(({ value }: { value: unknown }) => {
     if (value === '') return undefined;
-    return typeof value === 'string' ? JSON.parse(value) : value;
+    return typeof value === 'string' ? (JSON.parse(value) as unknown) : value;
   })
   @IsArray()
   @ArrayNotEmpty()

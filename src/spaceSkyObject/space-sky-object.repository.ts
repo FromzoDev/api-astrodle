@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, FindOneOptions, In } from 'typeorm';
+import { Repository, FindOneOptions } from 'typeorm';
 import { SpaceSkyObject } from './space-sky-object.entity';
 import { PaginationService } from '../shared/pagination/pagination.service';
 import { PaginationResult } from '../shared/pagination/pagination.interface';

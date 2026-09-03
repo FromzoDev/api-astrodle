@@ -55,12 +55,12 @@ export class createUserDTO {
     type: [String],
     title: 'Roles',
   })
-  @Transform(({ value }) => {
-    if (Array.isArray(value)) return value;
+  @Transform(({ value }: { value: unknown }) => {
+    if (Array.isArray(value)) return value as unknown[];
     if (typeof value === 'string') {
       try {
-        const parsed = JSON.parse(value);
-        return Array.isArray(parsed) ? parsed : [parsed];
+        const parsed: unknown = JSON.parse(value);
+        return Array.isArray(parsed) ? (parsed as unknown[]) : [parsed];
       } catch {
         return [value];
       }

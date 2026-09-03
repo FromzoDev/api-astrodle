@@ -6,9 +6,11 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import { Request } from 'express';
 import { ROLES_KEY } from '../common/decorators/rôles.decorator';
 import { Role, RoleHierarchy } from '../common/enum/roles.enum';
 import { ErrorMessage } from '../common/enum/error.enum';
+import { JwtPayload } from '../common/interfaces/jwt-payload.interface';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
@@ -22,12 +24,15 @@ export class RolesGuard implements CanActivate {
 
     if (!requiredRoles?.length) return true;
 
-    const { user } = context.switchToHttp().getRequest();
+    const { user } = context.switchToHttp().getRequest<Request>();
     this.validateUser(user, requiredRoles);
     return true;
   }
 
-  private validateUser(user: any, requiredRoles: Role[]): void {
+  private validateUser(
+    user: JwtPayload | undefined,
+    requiredRoles: Role[],
+  ): void {
     if (!user) {
       throw new UnauthorizedException(ErrorMessage.UNAUTHORIZED_MESSAGE);
     }

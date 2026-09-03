@@ -28,12 +28,20 @@ export class createSpaceSkyObjectDTO {
   objectType: ObjectType;
 
   @ApiProperty({ example: 7.5 })
-  @Transform(({ value }) => parseFloat(value))
+  @Transform(({ value }: { value: unknown }) =>
+    typeof value === 'number' || typeof value === 'string'
+      ? parseFloat(String(value))
+      : NaN,
+  )
   @IsNumber()
   magnitude: number;
 
   @ApiProperty({ example: 1344, description: 'Distance en années-lumière' })
-  @Transform(({ value }) => parseFloat(value))
+  @Transform(({ value }: { value: unknown }) =>
+    typeof value === 'number' || typeof value === 'string'
+      ? parseFloat(String(value))
+      : NaN,
+  )
   @IsNumber()
   distanceLightYears: number;
 
@@ -43,14 +51,18 @@ export class createSpaceSkyObjectDTO {
 
   @ApiProperty({ required: false, description: 'ID du découvreur' })
   @IsOptional()
-  @Transform(({ value }) => (value === '' ? undefined : value))
+  @Transform(({ value }: { value: unknown }) =>
+    value === '' ? undefined : value,
+  )
   @Type(() => Number)
   @IsInt()
   discovererId?: number;
 
   @ApiProperty({ required: false, description: 'ID du télescope observateur' })
   @IsOptional()
-  @Transform(({ value }) => (value === '' ? undefined : value))
+  @Transform(({ value }: { value: unknown }) =>
+    value === '' ? undefined : value,
+  )
   @Type(() => Number)
   @IsInt()
   telescopeId?: number;

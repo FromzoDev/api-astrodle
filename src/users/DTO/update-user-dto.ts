@@ -57,13 +57,13 @@ export class updateUserDTO {
     example: [Role.User, Role.Admin],
   })
   @IsOptional()
-  @Transform(({ value }) => {
+  @Transform(({ value }: { value: unknown }) => {
     if (value === undefined) return undefined;
-    if (Array.isArray(value)) return value;
+    if (Array.isArray(value)) return value as unknown[];
     if (typeof value === 'string') {
       try {
-        const parsed = JSON.parse(value);
-        return Array.isArray(parsed) ? parsed : [parsed];
+        const parsed: unknown = JSON.parse(value);
+        return Array.isArray(parsed) ? (parsed as unknown[]) : [parsed];
       } catch {
         return [value];
       }

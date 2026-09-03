@@ -3,7 +3,6 @@ import {
   HttpException,
   InternalServerErrorException,
   NotFoundException,
-  ConflictException,
 } from '@nestjs/common';
 import { SpaceOrganisation } from './space-organisations.entity';
 import { createspaceOrganisationDTO } from './DTO/space-organisations-create-dto';

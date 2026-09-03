@@ -36,8 +36,8 @@ export class createspaceOrganisationDTO {
     type: String,
     title: 'Countries',
   })
-  @Transform(({ value }) =>
-    typeof value === 'string' ? JSON.parse(value) : value,
+  @Transform(({ value }: { value: unknown }) =>
+    typeof value === 'string' ? (JSON.parse(value) as unknown) : value,
   )
   @IsArray()
   @ArrayNotEmpty()

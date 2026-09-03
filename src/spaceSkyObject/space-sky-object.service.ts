@@ -11,7 +11,9 @@ import { updateSpaceSkyObjectDTO } from './DTO/update-space-sky-object-dto';
 import { SpaceSkyObjectQueryDto } from './DTO/space-sky-object-query-dto';
 import { SpaceSkyObjectRepository } from './space-sky-object.repository';
 import { PersonalityRepository } from '../personality/personality.repository';
+import { Personality } from '../personality/personality.entity';
 import { TelescopeRepository } from '../telescopes/telescopes.repository';
+import { Telescope } from '../telescopes/telescopes.entity';
 import { PaginationResult } from '../shared/pagination/pagination.interface';
 import { ImageUploadService } from '../shared/upload/image-upload.service';
 import { MulterFile } from '../types/multer-file.type';
@@ -56,19 +58,21 @@ export class SpaceSkyObjectService {
     file?: MulterFile,
   ): Promise<SpaceSkyObject> {
     try {
-      let discoverer = undefined;
+      let discoverer: Personality | undefined = undefined;
       if (dto.discovererId) {
-        discoverer = await this.personalityRepository.findOneById(
-          dto.discovererId,
-        );
+        discoverer =
+          (await this.personalityRepository.findOneById(dto.discovererId)) ??
+          undefined;
         if (!discoverer) {
           throw new BadRequestException('Découvreur introuvable');
         }
       }
 
-      let telescope = undefined;
+      let telescope: Telescope | undefined = undefined;
       if (dto.telescopeId) {
-        telescope = await this.telescopeRepository.findOneById(dto.telescopeId);
+        telescope =
+          (await this.telescopeRepository.findOneById(dto.telescopeId)) ??
+          undefined;
         if (!telescope) {
           throw new BadRequestException('Télescope introuvable');
         }

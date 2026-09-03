@@ -13,6 +13,7 @@ import { ErrorMessage } from '../common/enum/error.enum';
 import { IS_PUBLIC_KEY } from '../common/decorators/public.decorator';
 import { BlacklistRepository } from '../blacklist/blacklist.repository';
 import { UsersRepository } from '../users/users.repository';
+import { JwtPayload } from '../common/interfaces/jwt-payload.interface';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -31,14 +32,14 @@ export class AuthGuard implements CanActivate {
 
     if (isPublic) return true;
 
-    const request = context.switchToHttp().getRequest();
+    const request = context.switchToHttp().getRequest<Request>();
     const token = this.extractTokenFromHeader(request);
     if (!token) {
       throw new UnauthorizedException(ErrorMessage.UNAUTHORIZED_MESSAGE);
     }
 
     try {
-      const payload = await this.jwtService.verifyAsync(token, {
+      const payload = await this.jwtService.verifyAsync<JwtPayload>(token, {
         secret: jwtConstants.secret,
       });
 
@@ -56,7 +57,7 @@ export class AuthGuard implements CanActivate {
         throw new UnauthorizedException(ErrorMessage.USER_ACCOUNT_DISABLED);
       }
 
-      request['user'] = payload;
+      request.user = payload;
     } catch (error) {
       if (error instanceof HttpException) {
         throw error;

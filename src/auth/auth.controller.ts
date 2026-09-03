@@ -5,11 +5,9 @@ import {
   HttpCode,
   HttpStatus,
   UseGuards,
-  Get,
-  Request,
-  Res,
   Req,
 } from '@nestjs/common';
+import { Request } from 'express';
 import { AuthService } from './auth.service';
 import { SignInDto } from './DTO/sign-in-dto';
 import { Public } from '../common/decorators/public.decorator';
@@ -42,7 +40,7 @@ export class AuthController {
   @Auth()
   @HttpCode(HttpStatus.OK)
   @Post('logout')
-  async logout(@Req() req): Promise<ApiResponse<null>> {
+  async logout(@Req() req: Request): Promise<ApiResponse<null>> {
     const token = req.headers.authorization.split(' ')[1];
     await this.authService.logout(token);
     return {

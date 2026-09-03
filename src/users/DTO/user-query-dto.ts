@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsOptional, IsString, IsIn, IsEnum, IsBoolean } from 'class-validator';
 import { FilterDto } from '../../shared/filter/filter-dto';
 import { Role } from '../../common/enum/roles.enum';
-import { Transform, Type } from 'class-transformer';
+import { Transform } from 'class-transformer';
 
 export class userQueryDto extends FilterDto {
   @ApiProperty({ required: false, enum: Role, description: 'Filtrer par rôle' })

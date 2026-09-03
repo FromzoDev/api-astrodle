@@ -31,7 +31,7 @@ export class createTelescopeDTO {
     description: 'Indique si le télescope est amateur',
   })
   @IsOptional()
-  @Transform(({ value }) => {
+  @Transform(({ value }: { value: unknown }) => {
     if (value === undefined || value === '') return undefined;
     return value === 'true' || value === true;
   })
@@ -44,10 +44,10 @@ export class createTelescopeDTO {
     description: 'IDs des organisations associées (télescope professionnel)',
   })
   @IsOptional()
-  @Transform(({ value }) => {
+  @Transform(({ value }: { value: unknown }) => {
     if (value === undefined || value === '') return undefined;
     const arr = Array.isArray(value) ? value : [value];
-    return arr.map((v) => parseInt(v, 10));
+    return arr.map((v) => parseInt(String(v), 10));
   })
   @IsArray()
   @IsInt({ each: true })
@@ -58,7 +58,9 @@ export class createTelescopeDTO {
     description: 'ID du propriétaire amateur (télescope amateur)',
   })
   @IsOptional()
-  @Transform(({ value }) => (value === '' ? undefined : value))
+  @Transform(({ value }: { value: unknown }) =>
+    value === '' ? undefined : value,
+  )
   @Type(() => Number)
   @IsInt()
   amateurOwnerId?: number;

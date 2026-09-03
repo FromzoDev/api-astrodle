@@ -12,6 +12,7 @@ import { User } from './user.entity';
 import { createUserDTO } from './DTO/create-user-dto';
 import { ErrorMessage } from '../common/enum/error.enum';
 import { updateUserDTO } from './DTO/update-user-dto';
+import { JwtPayload } from '../common/interfaces/jwt-payload.interface';
 import * as bcrypt from 'bcrypt';
 import { Role } from '../common/enum/roles.enum';
 import { PaginationResult } from '../shared/pagination/pagination.interface';
@@ -81,7 +82,7 @@ export class UsersService {
     file?: MulterFile,
   ): Promise<User> {
     try {
-      const { email, username, password } = createUserDTO;
+      const { password } = createUserDTO;
 
       const existingUser = await this.usersRepository.findOne({
         where: [
@@ -132,7 +133,7 @@ export class UsersService {
   async updateUser(
     updateUserDTO: updateUserDTO,
     id: number,
-    currentUser: User,
+    currentUser: JwtPayload,
     file?: MulterFile,
   ): Promise<User> {
     try {
@@ -140,7 +141,7 @@ export class UsersService {
         `updateUser(${id}) isActive=${updateUserDTO.isActive} (type: ${typeof updateUserDTO.isActive})`,
       );
 
-      if (currentUser.id !== id && !currentUser.roles.includes(Role.Admin)) {
+      if (currentUser.sub !== id && !currentUser.roles.includes(Role.Admin)) {
         throw new ForbiddenException(ErrorMessage.USER_CANNOT_MODIFY_OTHER);
       }
 

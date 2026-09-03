@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FindOneOptions, Repository } from 'typeorm';
 import { User } from './user.entity';
 import { PaginationService } from '../shared/pagination/pagination.service';
-import { PaginationDto } from '../shared/pagination/pagination-dto';
 import { PaginationResult } from '../shared/pagination/pagination.interface';
 import { userQueryDto } from './DTO/user-query-dto';
 import { FilterService } from '../shared/filter/filter.service';
@@ -70,7 +69,7 @@ export class UsersRepository {
   }
 
   async createUser(userData: Partial<User>): Promise<User> {
-    const user = await this.usersRepository.create(userData);
+    const user = this.usersRepository.create(userData);
     return await this.usersRepository.save(user);
   }
 

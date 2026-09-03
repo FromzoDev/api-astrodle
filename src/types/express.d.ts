@@ -1,9 +1,9 @@
-import { Multer } from 'multer';
+import { JwtPayload } from '../common/interfaces/jwt-payload.interface';
 
 declare global {
   namespace Express {
-    namespace Multer {
-      interface File extends Multer.File {}
+    interface Request {
+      user?: JwtPayload;
     }
   }
 }

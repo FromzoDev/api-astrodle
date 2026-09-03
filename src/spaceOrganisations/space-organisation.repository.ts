@@ -90,7 +90,7 @@ export class SpaceOrganisationRepository {
   async createSpaceOrganisation(
     SpaceOrganisationData: Partial<SpaceOrganisation>,
   ): Promise<SpaceOrganisation | null> {
-    const spaceOrganisation = await this.spaceOrganisationRepository.create(
+    const spaceOrganisation = this.spaceOrganisationRepository.create(
       SpaceOrganisationData,
     );
     return await this.spaceOrganisationRepository.save(spaceOrganisation);

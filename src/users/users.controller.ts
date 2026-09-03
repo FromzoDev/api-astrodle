@@ -29,6 +29,7 @@ import { ApiConsumes, ApiBody } from '@nestjs/swagger';
 import { MulterFile } from '../types/multer-file.type';
 import { userQueryDto } from './DTO/user-query-dto';
 import { ErrorMessage } from '../common/enum/error.enum';
+import { Request as ExpressRequest } from 'express';
 
 @ApiBearerAuth('JWT-auth')
 @Controller('users')
@@ -61,7 +62,9 @@ export class UsersController {
   @Auth()
   @Get('profile')
   @ApiBearerAuth('JWT-auth')
-  async getProfile(@Request() req): Promise<ApiResponse<User | null>> {
+  async getProfile(
+    @Request() req: ExpressRequest,
+  ): Promise<ApiResponse<User | null>> {
     const user = await this.usersService.findOneById(req.user.sub);
 
     return {
@@ -131,7 +134,7 @@ export class UsersController {
   async updateUser(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateUserDTO: updateUserDTO,
-    @Request() req,
+    @Request() req: ExpressRequest,
     @UploadedFile() file: MulterFile,
   ): Promise<ApiResponse<User | null>> {
     const updatedUser = await this.usersService.updateUser(

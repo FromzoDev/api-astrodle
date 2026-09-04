@@ -8,7 +8,11 @@ export class FilterDto extends PaginationDto {
   @IsString()
   search?: string;
 
-  @ApiProperty({ required: false, enum: ['ASC', 'DESC'], description: 'Direction du tri' })
+  @ApiProperty({
+    required: false,
+    enum: ['ASC', 'DESC'],
+    description: 'Direction du tri',
+  })
   @IsOptional()
   @IsIn(['ASC', 'DESC'])
   orderDirection?: 'ASC' | 'DESC';

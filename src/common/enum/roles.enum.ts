@@ -1,8 +1,8 @@
 export enum Role {
-    User = 'user',
-    Moderator = 'moderator',
-    Admin = 'admin',
-};
+  User = 'user',
+  Moderator = 'moderator',
+  Admin = 'admin',
+}
 
 export const RoleHierarchy: Record<Role, number> = {
   [Role.User]: 1,

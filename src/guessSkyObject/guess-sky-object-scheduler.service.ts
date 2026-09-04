@@ -25,9 +25,13 @@ export class GuessSkyObjectSchedulerService {
     const game = await this.guessSkyObjectGameRepository.planTodaysGame(today);
 
     if (game) {
-      this.logger.log(`Daily du ${today} planifié : objet id=${game.spaceSkyObject.id}`);
+      this.logger.log(
+        `Daily du ${today} planifié : objet id=${game.spaceSkyObject.id}`,
+      );
     } else {
-      this.logger.warn(`Impossible de planifier le Daily du ${today} — aucun objet activé`);
+      this.logger.warn(
+        `Impossible de planifier le Daily du ${today} — aucun objet activé`,
+      );
     }
   }
 }

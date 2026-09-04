@@ -9,7 +9,6 @@ export class PaginationService {
     querybuilder: SelectQueryBuilder<DataType>,
     options: PaginationDto,
   ): Promise<PaginationResult<DataType>> {
-
     const page = options.page ?? 1;
     const limit = Math.min(options.limit ?? 20, 100);
     const skip = (page - 1) * limit;

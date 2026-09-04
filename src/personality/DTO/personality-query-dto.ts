@@ -5,12 +5,20 @@ import { Country } from '../../common/enum/country.enum';
 import { Profession } from '../../common/enum/profession.enum';
 
 export class PersonalityQueryDto extends FilterDto {
-  @ApiProperty({ required: false, enum: Country, description: 'Filtrer par nationalité' })
+  @ApiProperty({
+    required: false,
+    enum: Country,
+    description: 'Filtrer par nationalité',
+  })
   @IsOptional()
   @IsEnum(Country)
   nationality?: Country;
 
-  @ApiProperty({ required: false, enum: Profession, description: 'Filtrer par profession' })
+  @ApiProperty({
+    required: false,
+    enum: Profession,
+    description: 'Filtrer par profession',
+  })
   @IsOptional()
   @IsEnum(Profession)
   profession?: Profession;

@@ -1,4 +1,9 @@
-import { MiddlewareConsumer, Module, OnModuleInit, RequestMethod } from '@nestjs/common';
+import {
+  MiddlewareConsumer,
+  Module,
+  OnModuleInit,
+  RequestMethod,
+} from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -31,12 +36,14 @@ import { GameCleanupModule } from './game/game-cleanup/game-cleanup.module';
     }),
 
     ScheduleModule.forRoot(),
-    
-    ThrottlerModule.forRoot([{
-      ttl: 60000, 
-      limit: 5,    
-    }]),
-    
+
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000,
+        limit: 5,
+      },
+    ]),
+
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: process.env.POSTGRES_HOST || 'localhost',
@@ -44,8 +51,10 @@ import { GameCleanupModule } from './game/game-cleanup/game-cleanup.module';
       username: process.env.POSTGRES_USER || 'postgres',
       password: process.env.POSTGRES_PASSWORD || 'postgres',
       database: process.env.POSTGRES_DB || 'postgres',
-      synchronize: true,
+      synchronize: false,
       autoLoadEntities: true,
+      migrations: [__dirname + '/database/migrations/*{.ts,.js}'],
+      migrationsRun: true,
     }),
     AuthModule,
     BlacklistModule,
@@ -62,25 +71,22 @@ import { GameCleanupModule } from './game/game-cleanup/game-cleanup.module';
     DashboardModule,
     GameCleanupModule,
   ],
-  
+
   controllers: [AppController],
   providers: [AppService],
 })
-
-
 export class AppModule implements OnModuleInit {
   constructor(private dataSource: DataSource) {}
 
   async onModuleInit() {
-    
-    const userRepository = this.dataSource.getRepository(User); 
-    
+    const userRepository = this.dataSource.getRepository(User);
+
     await UserSeed.run(userRepository);
   }
 
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(LoggerMiddleware)
-      .forRoutes({ path: '*', method: RequestMethod.ALL }); 
+      .forRoutes({ path: '*', method: RequestMethod.ALL });
   }
 }

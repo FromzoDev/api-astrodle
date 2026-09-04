@@ -1,10 +1,26 @@
-import { Controller, Get, Post, Body, Param, Patch, Delete, ParseIntPipe, HttpStatus, Query, UseInterceptors, UploadedFile } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Patch,
+  Delete,
+  ParseIntPipe,
+  HttpStatus,
+  Query,
+  UseInterceptors,
+  UploadedFile,
+} from '@nestjs/common';
 import { SpaceSkyObjectService } from './space-sky-object.service';
 import { createSpaceSkyObjectDTO } from './DTO/create-space-sky-object-dto';
 import { updateSpaceSkyObjectDTO } from './DTO/update-space-sky-object-dto';
 import { SpaceSkyObjectQueryDto } from './DTO/space-sky-object-query-dto';
 import { SpaceSkyObject } from './space-sky-object.entity';
-import { ApiResponse, PaginatedApiResponse } from '../common/interfaces/response.interface';
+import {
+  ApiResponse,
+  PaginatedApiResponse,
+} from '../common/interfaces/response.interface';
 import { SuccessMessage } from '../common/enum/success.enum';
 import { ErrorMessage } from '../common/enum/error.enum';
 import { ApiBearerAuth, ApiBody, ApiConsumes } from '@nestjs/swagger';
@@ -26,7 +42,10 @@ export class SpaceSkyObjectController {
 
     return {
       code: HttpStatus.OK,
-      message: result.items.length > 0 ? SuccessMessage.SPACE_SKY_OBJECT_FETCHED_ALL : ErrorMessage.GLOBAL_NOT_FOUND_MESSAGE,
+      message:
+        result.items.length > 0
+          ? SuccessMessage.SPACE_SKY_OBJECT_FETCHED_ALL
+          : ErrorMessage.GLOBAL_NOT_FOUND_MESSAGE,
       data: result.items,
       pagination: {
         total: result.total,
@@ -38,12 +57,16 @@ export class SpaceSkyObjectController {
   }
 
   @Get('/:id')
-  async getSpaceSkyObjectById(@Param('id', ParseIntPipe) id: number): Promise<ApiResponse<SpaceSkyObject | null>> {
-    return await this.spaceSkyObjectService.findOneById(id).then((spaceSkyObject) => ({
-      code: HttpStatus.OK,
-      message: SuccessMessage.SPACE_SKY_OBJECT_FETCHED_BY_ID,
-      data: spaceSkyObject,
-    }));
+  async getSpaceSkyObjectById(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<ApiResponse<SpaceSkyObject | null>> {
+    return await this.spaceSkyObjectService
+      .findOneById(id)
+      .then((spaceSkyObject) => ({
+        code: HttpStatus.OK,
+        message: SuccessMessage.SPACE_SKY_OBJECT_FETCHED_BY_ID,
+        data: spaceSkyObject,
+      }));
   }
 
   @Auth(Role.Moderator)
@@ -71,11 +94,13 @@ export class SpaceSkyObjectController {
     @Body() dto: createSpaceSkyObjectDTO,
     @UploadedFile() file?: MulterFile,
   ): Promise<ApiResponse<SpaceSkyObject>> {
-    return await this.spaceSkyObjectService.createSpaceSkyObject(dto, file).then((spaceSkyObject) => ({
-      code: HttpStatus.CREATED,
-      message: SuccessMessage.SPACE_SKY_OBJECT_CREATED,
-      data: spaceSkyObject,
-    }));
+    return await this.spaceSkyObjectService
+      .createSpaceSkyObject(dto, file)
+      .then((spaceSkyObject) => ({
+        code: HttpStatus.CREATED,
+        message: SuccessMessage.SPACE_SKY_OBJECT_CREATED,
+        data: spaceSkyObject,
+      }));
   }
 
   @Auth(Role.Moderator)
@@ -87,16 +112,20 @@ export class SpaceSkyObjectController {
     @Body() dto: updateSpaceSkyObjectDTO,
     @UploadedFile() file?: MulterFile,
   ): Promise<ApiResponse<SpaceSkyObject>> {
-    return await this.spaceSkyObjectService.updateSpaceSkyObject(id, dto, file).then((spaceSkyObject) => ({
-      code: HttpStatus.OK,
-      message: SuccessMessage.SPACE_SKY_OBJECT_UPDATED,
-      data: spaceSkyObject,
-    }));
+    return await this.spaceSkyObjectService
+      .updateSpaceSkyObject(id, dto, file)
+      .then((spaceSkyObject) => ({
+        code: HttpStatus.OK,
+        message: SuccessMessage.SPACE_SKY_OBJECT_UPDATED,
+        data: spaceSkyObject,
+      }));
   }
 
   @Auth(Role.Moderator)
   @Delete('/:id')
-  async deleteSpaceSkyObject(@Param('id', ParseIntPipe) id: number): Promise<ApiResponse<null>> {
+  async deleteSpaceSkyObject(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<ApiResponse<null>> {
     await this.spaceSkyObjectService.deleteSpaceSkyObject(id);
 
     return {

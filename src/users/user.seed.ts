@@ -5,10 +5,12 @@ import { Role } from '../common/enum/roles.enum';
 
 export class UserSeed {
   static async run(userRepository: Repository<User>) {
-    const admin = await userRepository.findOne({ where: { email: process.env.ADMIN_EMAIL } });
+    const admin = await userRepository.findOne({
+      where: { email: process.env.ADMIN_EMAIL },
+    });
 
     if (!process.env.ADMIN_EMAIL || !process.env.ADMIN_PASSWORD) {
-        throw new Error('ADMIN_EMAIL and ADMIN_PASSWORD must be defined');
+      throw new Error('ADMIN_EMAIL and ADMIN_PASSWORD must be defined');
     }
 
     const salt = await bcrypt.genSalt();
@@ -27,7 +29,6 @@ export class UserSeed {
         roles: [Role.Admin],
       });
       console.log('User admin créé');
-      
     } else {
       console.log('User admin déjà existant');
     }

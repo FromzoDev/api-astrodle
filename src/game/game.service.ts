@@ -1,8 +1,16 @@
-import { Injectable, ForbiddenException, BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  ForbiddenException,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { GameSessionRepository } from './gameSession/game-session.repository';
 import { GameStatsRepository } from './gameStats/game-stats.repository';
 import { GameConfigRepository } from './gameConfig/game-config.repository';
-import { PlayableGame, GuessResult } from './interfaces/playable-game.interface';
+import {
+  PlayableGame,
+  GuessResult,
+} from './interfaces/playable-game.interface';
 import { GameType } from '../common/enum/game-type.enum';
 import { GameMode } from '../common/enum/game-mode.enum';
 import { GameStatus } from '../common/enum/game-status.enum';
@@ -22,12 +30,22 @@ export class GameService {
     return configs.map((c) => c.gameType);
   }
 
-  async isGameAvailableInMode(gameType: GameType, mode: GameMode): Promise<boolean> {
-    const config = await this.gameConfigRepository.findOneByGameTypeAndMode(gameType, mode);
+  async isGameAvailableInMode(
+    gameType: GameType,
+    mode: GameMode,
+  ): Promise<boolean> {
+    const config = await this.gameConfigRepository.findOneByGameTypeAndMode(
+      gameType,
+      mode,
+    );
     return config?.isEnabled ?? false;
   }
 
-  async play(gameType: GameType, mode: GameMode, gameLogic: PlayableGame): Promise<GameSession> {
+  async play(
+    gameType: GameType,
+    mode: GameMode,
+    gameLogic: PlayableGame,
+  ): Promise<GameSession> {
     const isEnabled = await this.isGameAvailableInMode(gameType, mode);
     if (!isEnabled) {
       throw new ForbiddenException(ErrorMessage.GAME_NOT_AVAILABLE);
@@ -44,7 +62,11 @@ export class GameService {
     });
   }
 
-  async submitAction(sessionId: string, action: unknown, gameLogic: PlayableGame): Promise<GameSession> {
+  async submitAction(
+    sessionId: string,
+    action: unknown,
+    gameLogic: PlayableGame,
+  ): Promise<GameSession> {
     const session = await this.gameSessionRepository.findOneById(sessionId);
 
     if (!session) {
@@ -60,7 +82,9 @@ export class GameService {
     const updatedSession = await this.gameSessionRepository.update(sessionId, {
       gameData: result.gameData ?? session.gameData,
       status: result.status,
-      ...(result.status !== GameStatus.InProgress && { finishedAt: new Date() }),
+      ...(result.status !== GameStatus.InProgress && {
+        finishedAt: new Date(),
+      }),
     });
 
     if (result.status === GameStatus.Won || result.status === GameStatus.Lost) {
@@ -68,10 +92,10 @@ export class GameService {
         session.gameType,
         session.mode,
         result.status === GameStatus.Won,
-    );
+      );
 
-  await gameLogic.onGameFinished(updatedSession, result.status);
-}
+      await gameLogic.onGameFinished(updatedSession, result.status);
+    }
 
     return updatedSession;
   }

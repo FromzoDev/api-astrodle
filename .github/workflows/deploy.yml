@@ -1,0 +1,53 @@
+name: CI/CD
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    name: Build & unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      # `npm run lint` is intentionally not run here: it currently fails on
+      # pre-existing issues unrelated to CI setup. Add it back once that
+      # debt is resolved.
+      # e2e tests (`npm run test:e2e`) are intentionally not run here: they
+      # require a real Postgres + Minio instance. See the team decision on
+      # how to provide that in CI before adding this step.
+
+      - name: Build
+        run: npm run build
+
+      - name: Unit tests
+        run: npm test
+
+  deploy:
+    name: Deploy to Coolify
+    needs: test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Coolify deployment webhook
+        run: |
+          curl --fail --silent --show-error \
+            --request GET \
+            --header "Authorization: Bearer ${{ secrets.COOLIFY_API_TOKEN }}" \
+            "${{ secrets.COOLIFY_WEBHOOK_URL }}"

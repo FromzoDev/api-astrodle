@@ -1,11 +1,19 @@
-import { Injectable, HttpException, InternalServerErrorException, NotFoundException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  HttpException,
+  InternalServerErrorException,
+  NotFoundException,
+  BadRequestException,
+} from '@nestjs/common';
 import { SpaceSkyObject } from './space-sky-object.entity';
 import { createSpaceSkyObjectDTO } from './DTO/create-space-sky-object-dto';
 import { updateSpaceSkyObjectDTO } from './DTO/update-space-sky-object-dto';
 import { SpaceSkyObjectQueryDto } from './DTO/space-sky-object-query-dto';
 import { SpaceSkyObjectRepository } from './space-sky-object.repository';
 import { PersonalityRepository } from '../personality/personality.repository';
+import { Personality } from '../personality/personality.entity';
 import { TelescopeRepository } from '../telescopes/telescopes.repository';
+import { Telescope } from '../telescopes/telescopes.entity';
 import { PaginationResult } from '../shared/pagination/pagination.interface';
 import { ImageUploadService } from '../shared/upload/image-upload.service';
 import { MulterFile } from '../types/multer-file.type';
@@ -20,7 +28,9 @@ export class SpaceSkyObjectService {
     private readonly imageUploadService: ImageUploadService,
   ) {}
 
-  async findPaginated(options: SpaceSkyObjectQueryDto): Promise<PaginationResult<SpaceSkyObject>> {
+  async findPaginated(
+    options: SpaceSkyObjectQueryDto,
+  ): Promise<PaginationResult<SpaceSkyObject>> {
     try {
       return await this.spaceSkyObjectRepository.findPaginated(options);
     } catch (error) {
@@ -31,7 +41,8 @@ export class SpaceSkyObjectService {
 
   async findOneById(id: number): Promise<SpaceSkyObject | null> {
     try {
-      const spaceSkyObject = await this.spaceSkyObjectRepository.findOneById(id);
+      const spaceSkyObject =
+        await this.spaceSkyObjectRepository.findOneById(id);
       if (!spaceSkyObject) {
         throw new NotFoundException(ErrorMessage.GLOBAL_NOT_FOUND_MESSAGE);
       }
@@ -42,19 +53,26 @@ export class SpaceSkyObjectService {
     }
   }
 
-  async createSpaceSkyObject(dto: createSpaceSkyObjectDTO, file?: MulterFile): Promise<SpaceSkyObject> {
+  async createSpaceSkyObject(
+    dto: createSpaceSkyObjectDTO,
+    file?: MulterFile,
+  ): Promise<SpaceSkyObject> {
     try {
-      let discoverer = undefined;
+      let discoverer: Personality | undefined = undefined;
       if (dto.discovererId) {
-        discoverer = await this.personalityRepository.findOneById(dto.discovererId);
+        discoverer =
+          (await this.personalityRepository.findOneById(dto.discovererId)) ??
+          undefined;
         if (!discoverer) {
           throw new BadRequestException('Découvreur introuvable');
         }
       }
 
-      let telescope = undefined;
+      let telescope: Telescope | undefined = undefined;
       if (dto.telescopeId) {
-        telescope = await this.telescopeRepository.findOneById(dto.telescopeId);
+        telescope =
+          (await this.telescopeRepository.findOneById(dto.telescopeId)) ??
+          undefined;
         if (!telescope) {
           throw new BadRequestException('Télescope introuvable');
         }
@@ -73,10 +91,17 @@ export class SpaceSkyObjectService {
       });
 
       if (file) {
-        const objectImage = await this.imageUploadService.uploadImage(file, 'space-sky-objects', saved.id, {
-          maxSizeMb: 100,
+        const objectImage = await this.imageUploadService.uploadImage(
+          file,
+          'space-sky-objects',
+          saved.id,
+          {
+            maxSizeMb: 100,
+          },
+        );
+        return this.spaceSkyObjectRepository.updateSpaceSkyObject(saved.id, {
+          objectImage,
         });
-        return this.spaceSkyObjectRepository.updateSpaceSkyObject(saved.id, { objectImage });
       }
 
       return saved;
@@ -86,16 +111,23 @@ export class SpaceSkyObjectService {
     }
   }
 
-  async updateSpaceSkyObject(id: number, dto: updateSpaceSkyObjectDTO, file?: MulterFile): Promise<SpaceSkyObject> {
+  async updateSpaceSkyObject(
+    id: number,
+    dto: updateSpaceSkyObjectDTO,
+    file?: MulterFile,
+  ): Promise<SpaceSkyObject> {
     try {
-      const spaceSkyObject = await this.spaceSkyObjectRepository.findOneById(id);
+      const spaceSkyObject =
+        await this.spaceSkyObjectRepository.findOneById(id);
       if (!spaceSkyObject) {
         throw new NotFoundException(ErrorMessage.GLOBAL_NOT_FOUND_MESSAGE);
       }
 
       let discoverer = spaceSkyObject.discoverer;
       if (dto.discovererId !== undefined) {
-        discoverer = await this.personalityRepository.findOneById(dto.discovererId);
+        discoverer = await this.personalityRepository.findOneById(
+          dto.discovererId,
+        );
         if (!discoverer) {
           throw new BadRequestException('Découvreur introuvable');
         }
@@ -111,18 +143,28 @@ export class SpaceSkyObjectService {
 
       let objectImage: string | undefined;
       if (file) {
-        objectImage = await this.imageUploadService.uploadImage(file, 'space-sky-objects', id, {
-          maxSizeMb: 100,
-        });
+        objectImage = await this.imageUploadService.uploadImage(
+          file,
+          'space-sky-objects',
+          id,
+          {
+            maxSizeMb: 100,
+          },
+        );
       }
 
-      const updated = await this.spaceSkyObjectRepository.updateSpaceSkyObject(id, {
-        ...dto,
-        ...(dto.discoveryDate && { discoveryDate: new Date(dto.discoveryDate) }),
-        discoverer,
-        telescope,
-        ...(objectImage && { objectImage }),
-      });
+      const updated = await this.spaceSkyObjectRepository.updateSpaceSkyObject(
+        id,
+        {
+          ...dto,
+          ...(dto.discoveryDate && {
+            discoveryDate: new Date(dto.discoveryDate),
+          }),
+          discoverer,
+          telescope,
+          ...(objectImage && { objectImage }),
+        },
+      );
 
       if (!updated) {
         throw new NotFoundException(ErrorMessage.GLOBAL_NOT_FOUND_MESSAGE);
@@ -137,7 +179,8 @@ export class SpaceSkyObjectService {
 
   async deleteSpaceSkyObject(id: number): Promise<void> {
     try {
-      const spaceSkyObject = await this.spaceSkyObjectRepository.findOneById(id);
+      const spaceSkyObject =
+        await this.spaceSkyObjectRepository.findOneById(id);
       if (!spaceSkyObject) {
         throw new NotFoundException(ErrorMessage.GLOBAL_NOT_FOUND_MESSAGE);
       }

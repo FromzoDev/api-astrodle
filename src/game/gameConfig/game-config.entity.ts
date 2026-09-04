@@ -1,22 +1,28 @@
-import { Entity, Column, PrimaryGeneratedColumn, UpdateDateColumn, Unique } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+  Unique,
+} from 'typeorm';
 import { GameMode } from '../../common/enum/game-mode.enum';
 import { GameType } from '../../common/enum/game-type.enum';
 
 @Entity()
 @Unique(['gameType', 'mode'])
 export class GameConfig {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column()
-    gameType: GameType;
+  @Column()
+  gameType: GameType;
 
-    @Column()
-    mode: GameMode;
+  @Column()
+  mode: GameMode;
 
-    @Column({ default: true })
-    isEnabled: boolean;
+  @Column({ default: true })
+  isEnabled: boolean;
 
-    @UpdateDateColumn()
-    updatedAt: Date;
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

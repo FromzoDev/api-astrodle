@@ -20,7 +20,10 @@ export class GameSessionRepository {
     return this.gameSessionRepository.save(session);
   }
 
-  async update(id: string, updateData: Partial<GameSession>): Promise<GameSession | null> {
+  async update(
+    id: string,
+    updateData: Partial<GameSession>,
+  ): Promise<GameSession | null> {
     await this.gameSessionRepository.update(id, updateData);
     return this.findOneById(id);
   }

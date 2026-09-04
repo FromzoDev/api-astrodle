@@ -4,6 +4,6 @@ import { FilterService } from './filter.service';
 @Global()
 @Module({
   providers: [FilterService],
-  exports: [FilterService]
+  exports: [FilterService],
 })
 export class FilterModule {}

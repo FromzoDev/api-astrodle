@@ -1,5 +1,8 @@
 import { Controller, Get, Query, HttpStatus } from '@nestjs/common';
-import { DashboardStatsService, GameOverviewEntry } from './dashboard-stats.service';
+import {
+  DashboardStatsService,
+  GameOverviewEntry,
+} from './dashboard-stats.service';
 import { GameMode } from '../common/enum/game-mode.enum';
 import { SuccessMessage } from '../common/enum/success.enum';
 import { ApiResponse } from '../common/interfaces/response.interface';
@@ -12,7 +15,9 @@ export class DashboardController {
 
   @Auth(Role.Admin)
   @Get('games-overview')
-  async getGamesOverview(@Query('mode') mode: GameMode): Promise<ApiResponse<GameOverviewEntry[]>> {
+  async getGamesOverview(
+    @Query('mode') mode: GameMode,
+  ): Promise<ApiResponse<GameOverviewEntry[]>> {
     const data = await this.dashboardStatsService.getAllGamesOverview(mode);
     return {
       code: HttpStatus.OK,

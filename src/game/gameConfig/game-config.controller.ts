@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Patch, Delete, Body, Param, ParseIntPipe, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Delete,
+  Body,
+  Param,
+  ParseIntPipe,
+  HttpStatus,
+} from '@nestjs/common';
 import { GameConfigRepository } from './game-config.repository';
 import { createGameConfigDTO } from './DTO/create-game-config-dto';
 import { updateGameConfigDTO } from './DTO/update-game-config-dto';
@@ -18,14 +28,24 @@ export class GameConfigController {
   @Get()
   async getAllConfigs(): Promise<ApiResponse<GameConfig[]>> {
     const data = await this.gameConfigRepository.findAll();
-    return { code: HttpStatus.OK, message: SuccessMessage.GAME_CONFIG_FETCHED, data };
+    return {
+      code: HttpStatus.OK,
+      message: SuccessMessage.GAME_CONFIG_FETCHED,
+      data,
+    };
   }
 
   @Auth(Role.Admin)
   @Post()
-  async createConfig(@Body() dto: createGameConfigDTO): Promise<ApiResponse<GameConfig>> {
+  async createConfig(
+    @Body() dto: createGameConfigDTO,
+  ): Promise<ApiResponse<GameConfig>> {
     const data = await this.gameConfigRepository.createGameConfig(dto);
-    return { code: HttpStatus.CREATED, message: SuccessMessage.GAME_CONFIG_CREATED, data };
+    return {
+      code: HttpStatus.CREATED,
+      message: SuccessMessage.GAME_CONFIG_CREATED,
+      data,
+    };
   }
 
   @Auth(Role.Admin)
@@ -35,13 +55,23 @@ export class GameConfigController {
     @Body() dto: updateGameConfigDTO,
   ): Promise<ApiResponse<GameConfig | null>> {
     const data = await this.gameConfigRepository.updateGameConfig(id, dto);
-    return { code: HttpStatus.OK, message: SuccessMessage.GAME_CONFIG_UPDATED, data };
+    return {
+      code: HttpStatus.OK,
+      message: SuccessMessage.GAME_CONFIG_UPDATED,
+      data,
+    };
   }
 
   @Auth(Role.Admin)
   @Delete(':id')
-  async deleteConfig(@Param('id', ParseIntPipe) id: number): Promise<ApiResponse<null>> {
+  async deleteConfig(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<ApiResponse<null>> {
     await this.gameConfigRepository.deleteGameConfig(id);
-    return { code: HttpStatus.OK, message: SuccessMessage.GAME_CONFIG_DELETED, data: null };
+    return {
+      code: HttpStatus.OK,
+      message: SuccessMessage.GAME_CONFIG_DELETED,
+      data: null,
+    };
   }
 }

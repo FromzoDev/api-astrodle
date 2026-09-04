@@ -1,31 +1,36 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+} from 'typeorm';
 import { GameType } from '../../common/enum/game-type.enum';
 import { GameMode } from '../../common/enum/game-mode.enum';
 import { GameStatus } from '../../common/enum/game-status.enum';
 
 @Entity()
 export class GameSession {
-    @PrimaryGeneratedColumn('uuid')
-    id: string;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
-    @Column()
-    gameType: GameType;
+  @Column()
+  gameType: GameType;
 
-    @Column()
-    contentId: number;
+  @Column()
+  contentId: number;
 
-    @Column()
-    mode: GameMode;
+  @Column()
+  mode: GameMode;
 
-    @Column({ type: 'enum', enum: GameStatus, default: GameStatus.InProgress })
-    status: GameStatus;
+  @Column({ type: 'enum', enum: GameStatus, default: GameStatus.InProgress })
+  status: GameStatus;
 
-    @Column({ type: 'simple-json', nullable: true })
-    gameData?: Record<string, any>;
+  @Column({ type: 'simple-json', nullable: true })
+  gameData?: Record<string, any>;
 
-    @CreateDateColumn()
-    startedAt: Date;
+  @CreateDateColumn()
+  startedAt: Date;
 
-    @Column({ nullable: true })
-    finishedAt?: Date;
+  @Column({ nullable: true })
+  finishedAt?: Date;
 }

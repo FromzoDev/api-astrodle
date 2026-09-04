@@ -1,4 +1,15 @@
-import { Controller, Post, Get, Body, Param, Query, ParseIntPipe, UseGuards, HttpStatus, Patch } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Get,
+  Body,
+  Param,
+  Query,
+  ParseIntPipe,
+  UseGuards,
+  HttpStatus,
+  Patch,
+} from '@nestjs/common';
 import { GameService } from '../game/game.service';
 import { GuessSkyObjectService } from './guess-sky-object.service';
 import { GuessSkyObjectGameRepository } from './guess-sky-object-game.repository';
@@ -11,7 +22,10 @@ import { GameType } from '../common/enum/game-type.enum';
 import { GameMode } from '../common/enum/game-mode.enum';
 import { SuccessMessage } from '../common/enum/success.enum';
 import { ErrorMessage } from '../common/enum/error.enum';
-import { ApiResponse, PaginatedApiResponse } from '../common/interfaces/response.interface';
+import {
+  ApiResponse,
+  PaginatedApiResponse,
+} from '../common/interfaces/response.interface';
 import { ApiBearerAuth } from '@nestjs/swagger';
 import { Auth } from '../common/decorators/auth.decorator';
 import { Role } from '../common/enum/roles.enum';
@@ -35,7 +49,11 @@ export class GuessSkyObjectController {
   @RequireGameEnabled(GameType.GuessSkyObject, GameMode.Daily)
   @Post('daily/start')
   async startDaily(): Promise<ApiResponse<Record<string, any>>> {
-    const session = await this.gameService.play(GameType.GuessSkyObject, GameMode.Daily, this.guessSkyObjectService);
+    const session = await this.gameService.play(
+      GameType.GuessSkyObject,
+      GameMode.Daily,
+      this.guessSkyObjectService,
+    );
     const view = await this.guessSkyObjectService.buildClientView(session);
 
     return {
@@ -49,7 +67,11 @@ export class GuessSkyObjectController {
   @RequireGameEnabled(GameType.GuessSkyObject, GameMode.Casual)
   @Post('casual/start')
   async startCasual(): Promise<ApiResponse<Record<string, any>>> {
-    const session = await this.gameService.play(GameType.GuessSkyObject, GameMode.Casual, this.guessSkyObjectService);
+    const session = await this.gameService.play(
+      GameType.GuessSkyObject,
+      GameMode.Casual,
+      this.guessSkyObjectService,
+    );
     const view = await this.guessSkyObjectService.buildClientView(session);
 
     return {
@@ -79,17 +101,30 @@ export class GuessSkyObjectController {
   }
 
   @Get('stats')
-  async getGameStats(@Query('mode') mode: GameMode): Promise<ApiResponse<Record<string, any>>> {
+  async getGameStats(
+    @Query('mode') mode: GameMode,
+  ): Promise<ApiResponse<Record<string, any>>> {
     const data = await this.guessSkyObjectService.getGlobalStats(mode);
-    return { code: HttpStatus.OK, message: SuccessMessage.GAME_STATS_FETCHED, data };
+    return {
+      code: HttpStatus.OK,
+      message: SuccessMessage.GAME_STATS_FETCHED,
+      data,
+    };
   }
 
   @Get(':spaceSkyObjectId/stats')
   async getObjectStats(
     @Param('spaceSkyObjectId', ParseIntPipe) spaceSkyObjectId: number,
   ): Promise<ApiResponse<GuessSkyObjectGame | null>> {
-    const data = await this.guessSkyObjectGameRepository.findBySpaceSkyObjectId(spaceSkyObjectId);
-    return { code: HttpStatus.OK, message: SuccessMessage.GAME_STATS_FETCHED, data };
+    const data =
+      await this.guessSkyObjectGameRepository.findBySpaceSkyObjectId(
+        spaceSkyObjectId,
+      );
+    return {
+      code: HttpStatus.OK,
+      message: SuccessMessage.GAME_STATS_FETCHED,
+      data,
+    };
   }
 
   @Auth(Role.Moderator)
@@ -97,10 +132,14 @@ export class GuessSkyObjectController {
   async getGamesPaginated(
     @Query() queryDto: GuessSkyObjectGameQueryDto,
   ): Promise<PaginatedApiResponse<GuessSkyObjectGame>> {
-    const result = await this.guessSkyObjectGameRepository.findPaginated(queryDto);
+    const result =
+      await this.guessSkyObjectGameRepository.findPaginated(queryDto);
     return {
       code: HttpStatus.OK,
-      message: result.items.length > 0 ? SuccessMessage.GUESS_SKY_OBJECT_GAME_FETCHED_ALL : ErrorMessage.GLOBAL_NOT_FOUND_MESSAGE,
+      message:
+        result.items.length > 0
+          ? SuccessMessage.GUESS_SKY_OBJECT_GAME_FETCHED_ALL
+          : ErrorMessage.GLOBAL_NOT_FOUND_MESSAGE,
       data: result.items,
       pagination: {
         total: result.total,
@@ -113,9 +152,17 @@ export class GuessSkyObjectController {
 
   @Auth(Role.Moderator)
   @Post('games')
-  async enableForGame(@Body() dto: CreateGuessSkyObjectGameDTO): Promise<ApiResponse<GuessSkyObjectGame>> {
-    const data = await this.guessSkyObjectGameRepository.create(dto.spaceSkyObjectId);
-    return { code: HttpStatus.CREATED, message: SuccessMessage.GUESS_SKY_OBJECT_GAME_CREATED, data };
+  async enableForGame(
+    @Body() dto: CreateGuessSkyObjectGameDTO,
+  ): Promise<ApiResponse<GuessSkyObjectGame>> {
+    const data = await this.guessSkyObjectGameRepository.create(
+      dto.spaceSkyObjectId,
+    );
+    return {
+      code: HttpStatus.CREATED,
+      message: SuccessMessage.GUESS_SKY_OBJECT_GAME_CREATED,
+      data,
+    };
   }
 
   @Auth(Role.Moderator)
@@ -125,7 +172,11 @@ export class GuessSkyObjectController {
     @Body() dto: UpdateGuessSkyObjectGameDTO,
   ): Promise<ApiResponse<null>> {
     await this.guessSkyObjectGameRepository.toggleEnabled(id, dto.isEnabled);
-    return { code: HttpStatus.OK, message: SuccessMessage.GUESS_SKY_OBJECT_GAME_UPDATED, data: null };
+    return {
+      code: HttpStatus.OK,
+      message: SuccessMessage.GUESS_SKY_OBJECT_GAME_UPDATED,
+      data: null,
+    };
   }
 
   @Auth(Role.Moderator)
@@ -133,7 +184,8 @@ export class GuessSkyObjectController {
   async getDailyScheduleHistory(
     @Query() queryDto: DailyGameScheduleQueryDto,
   ): Promise<PaginatedApiResponse<DailyGameSchedule>> {
-    const result = await this.dailyGameScheduleRepository.findPaginated(queryDto);
+    const result =
+      await this.dailyGameScheduleRepository.findPaginated(queryDto);
     return {
       code: HttpStatus.OK,
       message: SuccessMessage.DAILY_SCHEDULE_FETCHED,

@@ -16,14 +16,21 @@ export class PersonalityRepository {
     private readonly filterService: FilterService,
   ) {}
 
-  async findPaginated(options: PersonalityQueryDto): Promise<PaginationResult<Personality>> {
-    let queryBuilder = this.personalityRepository.createQueryBuilder('personality');
+  async findPaginated(
+    options: PersonalityQueryDto,
+  ): Promise<PaginationResult<Personality>> {
+    let queryBuilder =
+      this.personalityRepository.createQueryBuilder('personality');
 
-    queryBuilder = this.filterService.applySearch(queryBuilder, options.search, [
-      'personality.firstName',
-      'personality.lastName',
-      'personality.description',
-    ]);
+    queryBuilder = this.filterService.applySearch(
+      queryBuilder,
+      options.search,
+      [
+        'personality.firstName',
+        'personality.lastName',
+        'personality.description',
+      ],
+    );
 
     const exactFilters: Array<{ field: string; value: unknown }> = [
       { field: 'personality.nationality', value: options.nationality },
@@ -31,7 +38,11 @@ export class PersonalityRepository {
     ];
 
     for (const { field, value } of exactFilters) {
-      queryBuilder = this.filterService.applyExactFilter(queryBuilder, value, field);
+      queryBuilder = this.filterService.applyExactFilter(
+        queryBuilder,
+        value,
+        field,
+      );
     }
 
     queryBuilder = this.filterService.applyOrderFilter(
@@ -43,7 +54,9 @@ export class PersonalityRepository {
     return this.paginationService.paginate(queryBuilder, options);
   }
 
-  async findOne(options: FindOneOptions<Personality>): Promise<Personality | null> {
+  async findOne(
+    options: FindOneOptions<Personality>,
+  ): Promise<Personality | null> {
     return this.personalityRepository.findOne(options);
   }
 
@@ -60,7 +73,10 @@ export class PersonalityRepository {
     return this.personalityRepository.save(personality);
   }
 
-  async updatePersonality(id: number, updateData: Partial<Personality>): Promise<Personality | null> {
+  async updatePersonality(
+    id: number,
+    updateData: Partial<Personality>,
+  ): Promise<Personality | null> {
     await this.personalityRepository.update(id, updateData);
     return this.findOneById(id);
   }

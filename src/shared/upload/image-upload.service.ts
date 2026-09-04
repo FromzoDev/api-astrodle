@@ -30,16 +30,23 @@ export class ImageUploadService {
     entityId: number | string,
     options?: { maxSizeMb?: number; allowedMimeTypes?: string[] },
   ): Promise<string> {
-
     const maxSizeMb = options?.maxSizeMb ?? 100;
-    const allowedMimeTypes = options?.allowedMimeTypes ?? ['image/jpeg', 'image/png', 'image/webp'];
+    const allowedMimeTypes = options?.allowedMimeTypes ?? [
+      'image/jpeg',
+      'image/png',
+      'image/webp',
+    ];
 
     if (file.size > maxSizeMb * 1024 * 1024) {
-      throw new BadRequestException(`Le fichier dépasse la taille maximale de ${maxSizeMb} Mo`);
+      throw new BadRequestException(
+        `Le fichier dépasse la taille maximale de ${maxSizeMb} Mo`,
+      );
     }
 
     if (!allowedMimeTypes.includes(file.mimetype)) {
-      throw new BadRequestException(`Format non autorisé. Formats acceptés : ${allowedMimeTypes.join(', ')}`);
+      throw new BadRequestException(
+        `Format non autorisé. Formats acceptés : ${allowedMimeTypes.join(', ')}`,
+      );
     }
 
     const extension = file.originalname.split('.').pop();
@@ -70,9 +77,10 @@ export class ImageUploadService {
   }
 
   private extractObjectKeyFromUrl(url: string): string | null {
-    const base = this.urlStyle === 'virtual-host'
-      ? `${this.publicUrl}/`
-      : `${this.publicUrl}/${this.bucket}/`;
+    const base =
+      this.urlStyle === 'virtual-host'
+        ? `${this.publicUrl}/`
+        : `${this.publicUrl}/${this.bucket}/`;
 
     if (!url.startsWith(base)) return null;
     return url.substring(base.length);

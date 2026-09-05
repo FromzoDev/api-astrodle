@@ -1,8 +1,4 @@
-import {
-  HttpException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { HttpException, Injectable, UnauthorizedException, } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { SignInDto } from './DTO/sign-in-dto';
 import * as bcrypt from 'bcrypt';
@@ -54,7 +50,7 @@ export class AuthService {
       this.jwtService.signAsync(
         { ...payload, refresh: true },
         { expiresIn: '7d' },
-      ), // ✅
+      ), 
     ]);
 
     return { access_token, refresh_token };

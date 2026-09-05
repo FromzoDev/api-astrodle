@@ -151,7 +151,10 @@ export class GuessSkyObjectService implements PlayableGame {
           )
           .join('');
 
-    const revealedHints = data.revealedHintKeys.map((key) => {
+    const hintKeys = isFinished
+      ? HINT_POOL.map((h) => h.key)
+      : data.revealedHintKeys;
+    const revealedHints = hintKeys.map((key) => {
       const hint = HINT_POOL.find((h) => h.key === key);
       return { key, value: hint.resolve(spaceSkyObject) };
     });
